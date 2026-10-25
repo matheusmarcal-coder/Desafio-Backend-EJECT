@@ -1,9 +1,12 @@
-from django.http import JsonResponse
+from NewStyle.models import cliente, produto 
 
-def clientes(request):
-    if request.method == 'GET':
-        cliente = {
-            'id' : '1',
-            'nome': 'cliente 1'
-        }
-        return JsonResponse(cliente)
+from NewStyle.serializers import clienteSerializer, produtoSerializer 
+from rest_framework import viewsets 
+
+class clienteViewSet(viewsets.ModelViewSet): 
+    queryset = cliente.objects.all()
+    serializer_class = clienteSerializer 
+
+class produtoViewSet(viewsets.ModelViewSet):
+    queryset = produto.objects.all()
+    serializer_class = produtoSerializer 

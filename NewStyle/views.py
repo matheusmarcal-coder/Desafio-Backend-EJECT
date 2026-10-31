@@ -1,12 +1,16 @@
-from NewStyle.models import cliente, produto 
+from NewStyle.models import Cliente, Produto, Categoria 
 
-from NewStyle.serializers import clienteSerializer, produtoSerializer 
+from NewStyle.serializers import ClienteSerializer, ProdutoSerializer, CategoriaSerializer
 from rest_framework import viewsets 
 
-class clienteViewSet(viewsets.ModelViewSet): 
-    queryset = cliente.objects.all()
-    serializer_class = clienteSerializer 
+class ClienteViewSet(viewsets.ModelViewSet): 
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer 
 
-class produtoViewSet(viewsets.ModelViewSet):
-    queryset = produto.objects.all()
-    serializer_class = produtoSerializer 
+class ProdutoViewSet(viewsets.ModelViewSet):
+    queryset = Produto.objects.all()
+    serializer_class = ProdutoSerializer 
+
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer

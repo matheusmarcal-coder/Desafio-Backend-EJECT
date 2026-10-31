@@ -1,13 +1,18 @@
 from rest_framework import serializers
 
-from NewStyle.models import cliente, produto 
+from NewStyle.models import Cliente, Produto, Categoria
 
-class clienteSerializer (serializers.ModelSerializer): 
+class ClienteSerializer (serializers.ModelSerializer): 
     class Meta:
-        model = cliente 
+        model = Cliente 
         fields = ['id', 'nome', 'email', 'cpf', 'data_nascimento','telefone']
 
-class produtoSerializer(serializers.ModelSerializer):
+class ProdutoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = produto
+        model = Produto
+        fields = '__all__'
+
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
         fields = '__all__'

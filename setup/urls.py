@@ -1,12 +1,13 @@
 
 from django.contrib import admin
 from django.urls import path, include 
-from NewStyle.views import clienteViewSet, produtoViewSet
+from NewStyle.views import ClienteViewSet, ProdutoViewSet, CategoriaViewSet
 from rest_framework import routers 
 
 router = routers.DefaultRouter()
-router.register('clientes', clienteViewSet, basename='clientes')
-router.register('produtos', produtoViewSet, basename = 'produtos')
+router.register('clientes', ClienteViewSet, basename='Clientes')
+router.register('produtos', ProdutoViewSet, basename = 'Produtos')
+router.register('categorias', CategoriaViewSet, basename = 'Categorias')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

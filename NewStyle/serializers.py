@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from NewStyle.models import Cliente, Produto, Categoria
+from NewStyle.models import Cliente, Produto, Categoria, Variacao
 
 class ClienteSerializer (serializers.ModelSerializer): 
     class Meta:
@@ -16,3 +16,8 @@ class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categoria
         fields = '__all__'
+
+class VariacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Variacao
+        exclude = ["Produto"]

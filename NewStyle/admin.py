@@ -1,6 +1,6 @@
 from django.contrib import admin
-
-from NewStyle.models import Cliente, Produto 
+from django.contrib.auth.admin import UserAdmin
+from NewStyle.models import Cliente, Produto, Usuario 
 
 class produtos(admin.ModelAdmin): 
     list_display = ('id', 'nome', 'preco', 'categoria',)
@@ -16,3 +16,9 @@ class clientes(admin.ModelAdmin):
     search_fields = ('nome', 'email',)
 
 admin.site.register(Cliente, clientes)
+
+
+class UsuarioAdmin(UserAdmin):
+    model = Usuario
+
+admin.site.register(Usuario, UsuarioAdmin)

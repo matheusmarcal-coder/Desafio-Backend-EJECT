@@ -2,9 +2,45 @@ from django.db import models
 
 from django.core.validators import MinValueValidator
 
+from django.contrib.auth.models import AbstractUser
+
+
+    # """Classe personalizada de usuário que estende o modelo AbstractUser do Django."""
+class Usuario(AbstractUser):
+        #"""Define os papéis disponíveis para o usuário, representando CLIENTES e LOJISTA (papéis)."""
+    class Papel(models.TextChoices):
+        CLIENTE = 'cliente', 'Cliente'
+        LOJISTA = 'lojista', 'Lojista'
+    #"""Campo de email do usuário, definido como único e obrigatório."""
+    email = models.EmailField(unique = True, blank = False, null = False)
+     
+    #""
+    papel = models.CharField(
+        max_length = 10,
+        choices=Papel.choices,
+        default=Papel.CLIENTE
+
+        )
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'papel']
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
+
+
+
 class Cliente(models.Model):
 
     #"""Representa um cliente e suas características."""
+
+    usuario = models.OneToOneField(
+        Usuario, 
+        on_delete=models.CASCADE, 
+        related_name='cliente',
+    )
 
     nome = models.CharField(max_length = 100)
     email = models.EmailField(blank = False, max_length = 30)

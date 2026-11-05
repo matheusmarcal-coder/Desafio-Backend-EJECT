@@ -20,6 +20,8 @@ urlpatterns = [
     path('Produtos/<int:Produto_id>/Variacoes/', VariacaoViewSet.as_view({ 'post' : 'create'}) ),
     path('Produtos/<int:Produto_id>/Variacoes/<int:pk>/', VariacaoViewSet.as_view({ 'put' : 'update'}) ),
 
+
+#"""Define a URL pattern para login do usuário, mapeando em 'auth/login/' ""
     path('auth/login/', TokenObtainPairView.as_view()),
 #"""Define a URL pattern para registro do usuário, mapeando em 'auth/register/' ""
     path('auth/register/', RegistroView.as_view())

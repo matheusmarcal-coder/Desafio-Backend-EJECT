@@ -4,6 +4,9 @@ from NewStyle.models import Cliente, Produto, Categoria, Variacao, Usuario
 
 from django.contrib.auth.password_validation import validate_password
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer 
+
+
 class ClienteSerializer (serializers.ModelSerializer): 
     class Meta:
         model = Cliente 
@@ -41,9 +44,17 @@ class RegistroSerializer(serializers.ModelSerializer):
                 #"""Define o papel do usuário como CLIENTE por padrão."""
                 papel = Usuario.Papel.CLIENTE
             )
- #"""Define a senha do usuário usando o método set_password para garantir que seja armazenada de forma segura(hash)."""
+    #"""Define a senha do usuário usando o método set_password para garantir que seja armazenada de forma segura(hash)."""
             usuario.set_password(validated_data['password'])
             usuario.save()
 
             return usuario
-            
+#""Classe feita para, além de verificar o login do usuário, retornar o papel do usuário (cliente ou lojista)""
+class LoginSerializer(TokenObtainPairSerializer): 
+
+    def validate(self, attrs):
+        dados = super().validate(attrs)
+
+        dados['papel'] = self.user.papel 
+
+        return dados

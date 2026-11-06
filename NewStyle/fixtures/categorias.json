@@ -1,0 +1,63 @@
+[
+    {
+        "model" : "NewStyle.categoria",
+        "pk" : 1,
+        "fields" : {
+            "nome" : "Calças"
+        }
+    },
+
+    {
+        "model" : "NewStyle.categoria",
+        "pk" : 2,
+        "fields" : {
+        
+            "nome" : "Bermudas"
+        }
+    },
+
+    {
+        "model" : "NewStyle.categoria",
+        "pk" : 3,
+        "fields" : {
+            "nome" : "Blusas"
+        }
+    },
+
+    {
+        "model" : "NewStyle.categoria",
+        "pk" : 4,
+        "fields" : {
+        
+            "nome" : "Regatas"
+        }
+    },
+
+    {
+        "model" : "NewStyle.categoria",
+        "pk" : 5,
+        "fields" : {
+            "nome" : "Vestidos"
+        }
+    },
+
+    {
+        "model" : "NewStyle.categoria",
+        "pk" : 6,
+        "fields" : {
+        
+            "nome" : "Shorts"
+        }
+    },
+
+    {
+        "model" : "NewStyle.categoria",
+        "pk" : 7,
+        "fields" : {
+        
+            "nome" : "Saias"
+        }
+    }
+]
+    
+    

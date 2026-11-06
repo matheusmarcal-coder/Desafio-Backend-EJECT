@@ -7,19 +7,17 @@ from django.contrib.auth.models import AbstractUser
 
     # """Classe personalizada de usuário que estende o modelo AbstractUser do Django."""
 class Usuario(AbstractUser):
-        #"""Define os papéis disponíveis para o usuário, representando CLIENTES e LOJISTA (papéis)."""
+    #"""Define os papéis disponíveis para o usuário, representando CLIENTES e LOJISTA (papéis)."""
     class Papel(models.TextChoices):
         CLIENTE = 'cliente', 'Cliente'
         LOJISTA = 'lojista', 'Lojista'
     #"""Campo de email do usuário, definido como único e obrigatório."""
     email = models.EmailField(unique = True, blank = False, null = False)
      
-    #""
     papel = models.CharField(
         max_length = 10,
         choices=Papel.choices,
         default=Papel.CLIENTE
-
         )
     
     USERNAME_FIELD = 'email'
@@ -63,7 +61,7 @@ class Categoria(models.Model):
 
 
 class Produto(models.Model):
- #"""Representa um produto e suas características."""
+ #"""Representa um produto e suas características.(estoque não fica no produto, e sim nas variações)"""
 
     nome = models.CharField(max_length = 100)
     preco = models.DecimalField(max_digits = 10, decimal_places = 2, validators = [MinValueValidator(0.01)])
@@ -85,6 +83,18 @@ class Variacao(models.Model):
         related_name='variacoes',
         on_delete=models.CASCADE,    
     )
-    tamanho = models.CharField(max_length=50)
+    #"""Define os tamanhos disponíveis para a variação do produto, representando diferentes opções de tamanho. (incluindo "Único" como variação)"""
+    class Tamanho (models.TextChoices):
+        P = 'P', 'Pequeno'
+        M = 'M', 'Médio'
+        G = 'G', 'Grande'
+        GG = 'GG', 'Extra Grande'
+        XGG = 'XGG', 'Extra Extra Grande'
+        Único = 'Único', 'Único'
+
+    tamanho = models.CharField(
+        max_length=10,
+        choices=Tamanho.choices
+    )
     cor = models.CharField(max_length=50)
     estoque = models.PositiveIntegerField(default=0)

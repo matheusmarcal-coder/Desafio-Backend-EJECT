@@ -1,4 +1,4 @@
-from NewStyle.models import Cliente, Produto, Categoria, Variacao 
+from NewStyle.models import Cliente, Produto, Categoria, Usuario, Variacao 
 
 from NewStyle.serializers import ClienteSerializer, ProdutoSerializer, CategoriaSerializer, VariacaoSerializer, RegistroSerializer
 
@@ -7,6 +7,7 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView 
 from rest_framework.response import Response 
 from rest_framework.permissions import AllowAny, DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated 
+from rest_framework.pagination import PageNumberPagination
 
 
 class ClienteViewSet(viewsets.ModelViewSet): 
@@ -18,9 +19,60 @@ class ClienteViewSet(viewsets.ModelViewSet):
          return Cliente.objects.filter(
               usuario=self.request.user
          ).order_by('id')
+    
+# Classe responsável pela listagem de produtos, com no máximo 10 produtos por página 
+class PaginacaoProdutos(PageNumberPagination):
+    page_size = 10
 
+# Mostra todos os produtos cadastrados no banco, ordenados por ID, e permite operações de leitura e escrita para usuários autenticados com permissões(lojista), enquanto usuários anônimos e clientes podem apenas ler os dados.
 class ProdutoViewSet(viewsets.ModelViewSet):
+    #""Define o conjunto de consultas (queryset) para o ViewSet de Produto, filtrando os produtos com base no papel do usuário autenticado. Se o usuário for um lojista, ele verá todos os produtos; caso contrário, apenas os produtos ativos serão exibidos."""
     queryset = Produto.objects.all().order_by('id')
+    # Permite a paginação de produtos, de no máximo 10 produtos por página
+    pagination_class = PaginacaoProdutos
+    #""Define o conjunto de consultas (queryset) para o ViewSet de Produto, filtrando os produtos com base no papel do usuário autenticado. Se o usuário for um lojista, ele verá todos os produtos; caso contrário, apenas os produtos ativos serão exibidos."""
+    def get_queryset(self):
+
+        produtos = Produto.objects.all().order_by('id')
+
+        status = self.request.query_params.get('status')
+        categoria = self.request.query_params.get('category')
+        preco_min = self.request.query_params.get('min_price')
+        preco_max = self.request.query_params.get('max_price')
+        busca_produto = self.request.query_params.get('search')
+        if (
+             self.request.user.is_authenticated and self.request.user.groups.filter(name='Lojistas').exists()
+        ):
+             #""Se o usuário estiver autenticado e for um lojista, filtra os produtos com base no parâmetro de status fornecido na requisição. Se o status for 'active', retorna apenas os produtos ativos; se for 'inactive', retorna apenas os produtos inativos; caso contrário, retorna todos os produtos.""
+             if status == 'active':
+                    produtos = produtos.filter(ativo=True).order_by('id')
+             
+             elif status == 'inactive':
+                    produtos = produtos.filter(ativo=False).order_by('id')
+             else:
+                    produtos =  Produto.objects.all().order_by('id')
+                  
+
+        else:
+                produtos = Produto.objects.filter(ativo=True).order_by('id')
+        #""Se o parâmetro de categoria for fornecido na requisição, filtra os produtos com base na categoria especificada, retornando apenas os produtos pertencentes a essa categoria.""
+        if categoria:
+            produtos = produtos.filter(categoria__id=categoria).order_by('id')
+
+        # busca de produtos por um preço maior ou igual
+        if preco_min:
+            produtos = produtos.filter(preco__gte=preco_min).order_by('id')
+
+        # busca de produtos por um preço menor ou igual 
+        if preco_max:
+             produtos = produtos.filter(preco_lte=preco_max).order_by('id')
+
+        # busca produtos pelo nome digitado (não diferencia de letras maiúsculas e minúsculas)
+        if busca_produto:
+             produtos = produtos.filter(nome__icontains=busca_produto)
+             
+        return produtos
+    
     serializer_class = ProdutoSerializer 
     #""Define as permissões para o ViewSet de Produto, permitindo que usuários autenticados com permissões de modelo possam realizar operações de leitura e escrita, enquanto usuários anônimos podem apenas ler os dados.""
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]

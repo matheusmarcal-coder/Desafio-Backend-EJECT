@@ -69,7 +69,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
                       "category" : "A categoria deve ter um ID numérico positivo de 1 a 7"
                  })
 
-        # busca de produtos por um preço maior ou igual
+        # busca de produtos por um preço maior ou igual, e verifica se é realmente um número ou um número negativo ou uma string
         if preco_min:
             try: 
                 preco_min=Decimal(preco_min)
@@ -84,7 +84,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
                      "min_price" : "Insira um número válido para o preço mínimo"
                 })
 
-        # busca de produtos por um preço menor ou igual 
+        # busca de produtos por um preço menor ou igual, e verifica se é realmente um número ou um número negativo ou uma string
         if preco_max:
             try: 
                 preco_max = Decimal(preco_max)
@@ -99,7 +99,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
                 raise ValidationError({
                     "max_price" : "Insira um número válido para o preço máximo"
                  })
-
+        # Verifica se o preço mínimo é realmente menor ou igual que o preço máximo
         if preco_min and preco_max:
             if preco_min > preco_max: 
                  raise ValidationError({

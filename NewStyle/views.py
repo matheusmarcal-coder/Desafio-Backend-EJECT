@@ -9,6 +9,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated 
 from rest_framework.pagination import PageNumberPagination
 
+from rest_framework.exceptions import ValidationError
+
+from decimal import Decimal, InvalidOperation
+
 
 class ClienteViewSet(viewsets.ModelViewSet): 
     #""Exige autenticação via JWT para acessar os dados dos clientes
@@ -40,6 +44,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         preco_min = self.request.query_params.get('min_price')
         preco_max = self.request.query_params.get('max_price')
         busca_produto = self.request.query_params.get('search')
+
         if (
              self.request.user.is_authenticated and self.request.user.groups.filter(name='Lojistas').exists()
         ):
@@ -57,20 +62,54 @@ class ProdutoViewSet(viewsets.ModelViewSet):
                 produtos = Produto.objects.filter(ativo=True).order_by('id')
         #""Se o parâmetro de categoria for fornecido na requisição, filtra os produtos com base na categoria especificada, retornando apenas os produtos pertencentes a essa categoria.""
         if categoria:
-            produtos = produtos.filter(categoria__id=categoria).order_by('id')
+            if categoria.isdigit() and int(categoria) > 0:
+                produtos = produtos.filter(categoria__id=categoria).order_by('id')
+            else: 
+                 raise ValidationError({
+                      "category" : "A categoria deve ter um ID numérico positivo de 1 a 7"
+                 })
 
         # busca de produtos por um preço maior ou igual
         if preco_min:
-            produtos = produtos.filter(preco__gte=preco_min).order_by('id')
+            try: 
+                preco_min=Decimal(preco_min)
+                if preco_min < 0:
+                      raise ValidationError({
+                           "min_price" : "O preço mínimo não pode ser um número negativo"
+                      })
+                
+                produtos = produtos.filter(preco__gte=preco_min).order_by('id')
+            except InvalidOperation:
+                raise ValidationError({
+                     "min_price" : "Insira um número válido para o preço mínimo"
+                })
 
         # busca de produtos por um preço menor ou igual 
         if preco_max:
-             produtos = produtos.filter(preco_lte=preco_max).order_by('id')
+            try: 
+                preco_max = Decimal(preco_max)
+                if preco_max < 0:
+                     raise ValidationError({
+                          "max_price" : "O preço máximo não pode ser um número negativo"
+                     })
+                  
+                produtos = produtos.filter(preco__lte=preco_max).order_by('id')
+
+            except InvalidOperation:
+                raise ValidationError({
+                    "max_price" : "Insira um número válido para o preço máximo"
+                 })
+
+        if preco_min and preco_max:
+            if preco_min > preco_max: 
+                 raise ValidationError({
+                    "min_price" : "O preço mínimo não pode ser maior que o preço máximo"     
+                 })
 
         # busca produtos pelo nome digitado (não diferencia de letras maiúsculas e minúsculas)
         if busca_produto:
              produtos = produtos.filter(nome__icontains=busca_produto)
-             
+
         return produtos
     
     serializer_class = ProdutoSerializer 

@@ -1,15 +1,15 @@
 ## 🛍️ NewStyle 
-### Objetivo e funcionalidades principais do projeto: 
+### (⚠️OBRIGATÓRIO⚠️)Objetivo e funcionalidades principais do projeto: 
 🚨???🚨🚨???🚨🚨???🚨🚨???🚨
 ## 🌐 Acesso
 - API Base:
-- Documentação Interativa (Swagger): 🚨???🚨🚨???🚨🚨???🚨🚨???🚨
+- (⚠️OBRIGATÓRIO⚠️)Documentação Interativa (Swagger): 🚨???🚨🚨???🚨🚨???🚨🚨???🚨
   obs: "Documentação da API: Instruções para acessar o Swagger com
 detalhes dos endpoints."
-## Modelo Conceitual de Dados  🚨???🚨🚨???🚨
+## (⚠️OBRIGATÓRIO⚠️)Modelo Conceitual de Dados  🚨???🚨🚨???🚨
 <img width="918" height="1666" alt="3 2 Modelo Conceitual - Desafio Backend 2026 2 - Matheus Marçal" src="https://github.com/user-attachments/assets/045a23e1-30ad-4641-a6b2-8476d0ba81ab" />
 
-## ⚙️ Instalação e Execução 
+## (⚠️OBRIGATÓRIO⚠️)⚙️ Instalação e Execução 
 ### Passo a passo para configurar a instalação:
 🚨NAO ESQUECER AS SEEDS🚨
 
@@ -21,7 +21,7 @@ detalhes dos endpoints."
 | **Django 6.1.2** | Framework Backend |
 | **Django REST Framework 3.18.3** | Criação e gerenciamento de APIs RESTful |
 | **SQLite** | Sistema Gerenciador de Banco de dados relacional  
-## Principais Dependências Utilizadas 
+## (⚠️OBRIGATÓRIO⚠️)Principais Dependências Utilizadas 
 | Dependência | Descrição |
 |---|---|
 |`djangorestframework-simplejwt` -> Versão 5.5.1 | Autenticação via JWT (token)|

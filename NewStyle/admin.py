@@ -10,12 +10,10 @@ class produtos(admin.ModelAdmin):
 
 admin.site.register(Produto, produtos)
 
+@admin.register(Cliente)
 class clientes(admin.ModelAdmin):
-    list_display = ('id', 'nome', 'email', 'cpf', 'data_nascimento', 'telefone',)
-    list_display_links = ('id', 'nome')
-    search_fields = ('nome', 'email',)
-
-admin.site.register(Cliente, clientes)
+    # Mostra o ID do cliente e do usuario associado, definido pelos dados fornecidos no registro 
+    list_display = ['id', 'usuario']
 
 
 class UsuarioAdmin(UserAdmin):

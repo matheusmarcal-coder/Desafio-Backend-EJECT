@@ -17,8 +17,8 @@ router.register('variacoes', VariacaoViewSet, basename = 'Variacoes')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('Produtos/<int:Produto_id>/Variacoes/', VariacaoViewSet.as_view({ 'post' : 'create'}) ),
-    path('Produtos/<int:Produto_id>/Variacoes/<int:pk>/', VariacaoViewSet.as_view({ 'put' : 'update'}) ),
+    path('products/<int:Produto_id>/variations/', VariacaoViewSet.as_view({ 'post' : 'create'}) ),
+    path('products/<int:Produto_id>/variations/<int:pk>/', VariacaoViewSet.as_view({ 'put' : 'update'}) ),
 
 
 #"""Define a URL pattern para login do usuário, mapeando em 'auth/login/' ""

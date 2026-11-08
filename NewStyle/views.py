@@ -18,6 +18,8 @@ class ClienteViewSet(viewsets.ModelViewSet):
     #""Exige autenticação via JWT para acessar os dados dos clientes
     permission_classes = [IsAuthenticated]
     serializer_class = ClienteSerializer 
+    # Permite vizualisar clientes (get), mas não apagar editar ou criar
+    http_method_names = ['get','head', 'options' ]
     #"""Define o conjunto de consultas (queryset) para o ViewSet de Cliente, filtrando os clientes associados ao usuário autenticado e ordenando-os pelo campo 'id'."""
     def get_queryset(self):
          return Cliente.objects.filter(

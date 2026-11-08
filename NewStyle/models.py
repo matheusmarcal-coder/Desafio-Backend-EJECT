@@ -11,8 +11,14 @@ class Usuario(AbstractUser):
     class Papel(models.TextChoices):
         CLIENTE = 'cliente', 'Cliente'
         LOJISTA = 'lojista', 'Lojista'
-    #"""Campo de email do usuário, definido como único e obrigatório."""
+    #"""Campo de email do usuário, definido como único e obrigatório, além das atribuições para registro de usuário."""
     email = models.EmailField(unique = True, blank = False, null = False)
+    nome_completo = models.CharField(max_length = 100, blank = True)
+    cpf = models.CharField(max_length = 11, blank = True, null = True, unique = True)
+    data_nascimento = models.DateField(blank = True, null = True)
+    telefone = models.CharField(max_length = 14, blank = True)
+    cep = models.CharField(max_length = 8, blank = True)
+    endereco = models.CharField(max_length=255, blank = True)
      
     papel = models.CharField(
         max_length = 10,
@@ -32,25 +38,17 @@ class Usuario(AbstractUser):
 
 class Cliente(models.Model):
 
-    #"""Representa um cliente e suas características."""
+    #"""Representa um cliente e suas características herdadas do registro"""
 
     usuario = models.OneToOneField(
         Usuario, 
         on_delete=models.CASCADE, 
         related_name='cliente',
     )
-
-    nome = models.CharField(max_length = 100)
-    email = models.EmailField(blank = False, max_length = 30)
-    cpf = models.CharField(max_length = 11)
-    data_nascimento = models.DateField()
-    telefone = models.CharField(max_length = 14)
-
-
     def __str__(self):
         
         #"""Retorna uma representação em string do cliente."""
-       return f"{self.nome} | {self.email} | {self.cpf} | {self.data_nascimento} | {self.telefone}"
+       return f"{self.usuario.nome_completo} | {self.usuario.email} | {self.usuario.cpf} | {self.usuario.data_nascimento} | {self.usuario.telefone} | {self.usuario.cpf} | {self.usuario.endereco} | {self.usuario.cep}"
 
 class Categoria(models.Model):
     #"""Representa as categorias de produtos disponíveis."""

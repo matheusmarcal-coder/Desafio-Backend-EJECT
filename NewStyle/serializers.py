@@ -38,6 +38,7 @@ class RegistroSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = [ 'email', 'password', 'nome_completo', 'cpf', 'telefone', 'data_nascimento', 'cep', 'endereco' ]
         extra_kwargs = {
+            'email' : {'required' : True, 'allow_blank' : False, 'allow_null' : False},
             'nome_completo' : {'required' : True, 'allow_blank' : False},
             'cpf' : {'required' : True, 'allow_blank' : False, 'allow_null' : False},
             'telefone' : {'required' : True, 'allow_blank' : False},
@@ -45,6 +46,15 @@ class RegistroSerializer(serializers.ModelSerializer):
             'cep' : {'required' : True, 'allow_blank' : False},
             'endereco' : {'required' : True,  'allow_blank' : False}
         }
+
+    def validate_telefone(self, numero):
+
+        if not numero.isdigit() or len(numero) != 11:
+            raise serializers.ValidationError(
+                "O número de telefone deve conter 11 dígitos, incluindo o DDD."
+            )
+        numero = numero [0:2] + " " + numero [2:7] + "-" + numero[7:11]
+        return numero 
     #Definindo os campos de registro para o usuario 
     def create(self, validated_data):
             usuario = Usuario(
@@ -73,6 +83,7 @@ class RegistroSerializer(serializers.ModelSerializer):
             # Criação de cliente de acordo com os dados fornecidos no registro para usuario
             Cliente.objects.create(usuario= usuario)
             return usuario
+    
 #""Classe feita para, além de verificar o login do usuário, retornar o papel do usuário (cliente ou lojista)""
 class LoginSerializer(TokenObtainPairSerializer): 
 

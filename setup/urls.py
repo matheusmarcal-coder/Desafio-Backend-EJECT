@@ -2,9 +2,10 @@
 
 from django.contrib import admin
 from django.urls import path, include 
-from NewStyle.views import ClienteViewSet, ProdutoViewSet, CategoriaViewSet, VariacaoViewSet, RegistroView
+from NewStyle.views import ClienteViewSet, ProdutoViewSet, CategoriaViewSet, VariacaoViewSet, RegistroView, LoginView
 from rest_framework import routers 
-from rest_framework_simplejwt.views import TokenObtainPairView
+
+
 
 
 
@@ -22,7 +23,7 @@ urlpatterns = [
 
 
 #"""Define a URL pattern para login do usuário, mapeando em 'auth/login/' ""
-    path('auth/login/', TokenObtainPairView.as_view()),
+    path('auth/login/', LoginView.as_view()),
 #"""Define a URL pattern para registro do usuário, mapeando em 'auth/register/' ""
     path('auth/register/', RegistroView.as_view())
 ]

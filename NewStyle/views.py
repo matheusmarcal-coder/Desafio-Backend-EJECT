@@ -13,6 +13,9 @@ from rest_framework.exceptions import ValidationError
 
 from decimal import Decimal, InvalidOperation
 
+from NewStyle.serializers import LoginSerializer
+
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 class ClienteViewSet(viewsets.ModelViewSet): 
     #""Exige autenticação via JWT para acessar os dados dos clientes
@@ -156,3 +159,5 @@ class RegistroView(APIView):
          status=status.HTTP_400_BAD_REQUEST
     )
 
+class LoginView(TokenObtainPairView):
+     serializer_class = LoginSerializer 

@@ -72,3 +72,6 @@ A API NewStyle oferece diversos filtros para facilitar a busca e organização d
 ## 🔐 Autenticação e Permissões
 ## 🧱 Estrutura do Projeto
 ## 🧑‍💻 Autor
+**Matheus Marçal**
+Trainee Backend | Estudante do Bacharelado em Ciências e Tecnologia
+[GitHub](https://github.com/matheusmarcal-coder)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from NewStyle.models import Cliente, Produto, Categoria, Variacao, Usuario 
+from NewStyle.models import Cliente, Produto, Categoria, Variacao, Usuario, ItemCarrinho
 
 from django.contrib.auth.password_validation import validate_password
 
@@ -27,7 +27,7 @@ class CategoriaSerializer(serializers.ModelSerializer):
 class VariacaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Variacao
-        exclude = ["Produto"]
+        exclude = []
 
 
 #"""Serializer para o modelo Usuario, incluindo o campo de senha."""
@@ -93,3 +93,43 @@ class LoginSerializer(TokenObtainPairSerializer):
         dados['papel'] = self.user.papel 
 
         return dados
+
+
+class ItemCarrinhoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemCarrinho 
+        exclude = []
+        read_only_fields = ['carrinho']
+
+    def validate_quantidade_itens(self, value):
+        if value <= 0 : 
+            raise serializers.ValidationError (
+                "A quantidade inserida no carrinho deve ser maior que 0"
+            )
+        else : 
+            return value 
+    # Verificamos se a variação adcionada pelo cliente está contida em um produto ativo
+    def validate_variacao(self, value):
+        if value.Produto.ativo is False:
+            raise serializers.ValidationError (
+                "A variação inserida no carrinho deve estar contida em um produto ativo"
+            )
+        else: 
+            return value 
+    # Situação onde o cliente está ATUALIZANDO uma variação já existente no carrinho: Se ele está atualizando uma variação existente -> impedimos a troca de variação no meio do processo ; caso contrário -> recuperamos a variação original e atualizamos o estoque 
+    def validate(self, attrs):
+        quantidade_itens = attrs.get('quantidade_itens')
+        variacao = attrs.get('variacao')
+
+        if self.instance is not None:
+            if variacao is not None:
+                raise serializers.ValidationError(
+                    "Não é permitido alterar a variação"
+                )
+            variacao = self.instance.variacao
+
+        if quantidade_itens is not None and quantidade_itens > variacao.estoque: 
+            raise serializers.ValidationError(
+                "A quantidade de itens adcionada não pode exceder a variação de estoque da loja"
+            )
+        return attrs

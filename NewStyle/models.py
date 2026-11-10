@@ -68,9 +68,7 @@ class Produto(models.Model):
     ativo = models.BooleanField(default = True)
     def __str__(self):
     #"""Retorna uma representação em string do produto."""
-        return f"{self.nome} | {self.categoria} | Produto ativo? {self.ativo}"
-
-
+        return f"{self.nome} | {self.categoria} "
 
 
 
@@ -96,3 +94,26 @@ class Variacao(models.Model):
     )
     cor = models.CharField(max_length=50)
     estoque = models.PositiveIntegerField(default=0)
+
+class Carrinho(models.Model):
+    # Estabelece a relação cardinal de 1:1 com cliente e carrinho 
+    usuario = models.OneToOneField(Usuario, on_delete = models.CASCADE)
+
+
+
+class ItemCarrinho(models.Model):
+    # Estabelecendo a relação de 1 carrinho : N itens carrinho apartir do uso da ForeignKey (cardinalidade 1:N)
+    carrinho = models.ForeignKey(Carrinho, on_delete = models.CASCADE)
+    # Estabelecendo a relação de 1 variação : N itens carrinho (exemplo: variação -  camisa M + azul ; itens - 3 itens dessa variação)
+    variacao = models.ForeignKey(Variacao, on_delete = models.CASCADE)
+    # Número de variações selecionadas por carrinho, como padrão, começando com quantidade de itens 1
+    quantidade_itens = models.PositiveIntegerField(default = 1)
+    #Evitando 2 ou mais registros de uma MESMA variação no MESMO carrinho, as variações serão somadas por quantidades
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['carrinho', 'variacao'],
+                name= 'item_unico_por_carrinho'
+            )
+        ]
+    

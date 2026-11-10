@@ -2,7 +2,7 @@
 ### (⚠️OBRIGATÓRIO⚠️)Objetivo e funcionalidades principais do projeto: 
 🚨???🚨🚨???🚨🚨???🚨🚨???🚨
 ## 🌐 Acesso
-- API Base:
+- API Base: [API](https://desafiobackendejectdeploy.pythonanywhere.com/)
 - (⚠️OBRIGATÓRIO⚠️)Documentação Interativa (Swagger): 🚨???🚨🚨???🚨🚨???🚨🚨???🚨
   obs: "Documentação da API: Instruções para acessar o Swagger com
 detalhes dos endpoints."

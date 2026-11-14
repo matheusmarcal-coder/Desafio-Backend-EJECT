@@ -7,7 +7,8 @@
   obs: "Documentação da API: Instruções para acessar o Swagger com
 detalhes dos endpoints."
 ## (⚠️OBRIGATÓRIO⚠️)Modelo Conceitual de Dados  🚨???🚨🚨???🚨
-<img width="918" height="1666" alt="3 2 Modelo Conceitual - Desafio Backend 2026 2 - Matheus Marçal" src="https://github.com/user-attachments/assets/045a23e1-30ad-4641-a6b2-8476d0ba81ab" />
+<img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d0d5233b-33fe-418a-83a4-ebba3512adca" />
+
 
 ## (⚠️OBRIGATÓRIO⚠️)⚙️ Instalação e Execução 
 ### Passo a passo para configurar a instalação:

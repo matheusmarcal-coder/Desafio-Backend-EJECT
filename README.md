@@ -11,7 +11,13 @@ detalhes dos endpoints."
 <img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d0d5233b-33fe-418a-83a4-ebba3512adca" />
 
 ## 📋 Sobre o Projeto
-Descrição do projeto.
+A NewStyle é um projeto de desenvolvimento de uma API RESTful para um sistema de e-commerce, contendo clientes, lojistas e produtos. Desse modo, segue as principais funcionalidades implementadas:
+- Gerenciamento de usuários
+  - Cadastro e autenticação de usuários, sendo diferenciados por papéis: lojistas e clientes. O sistema agrupa os papéis em grupos, com suas respectivas permissões para controlar as operações disponíveis dentro da API.
+- Gerenciamento de produtos
+  - Operações CRUD de produtos, categoria e variações, incluindo informações como: nome, preço, tamanho, cor, estoque e status do produto. 
+- Publicação na internet
+  - API publicada no PythonAnywhere, apresentando interface navegável do DRF.
 
 ## 🧰 Tecnologias Utilizadas
 | Tecnologia | Descrição |

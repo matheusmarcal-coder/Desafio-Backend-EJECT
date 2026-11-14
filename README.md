@@ -111,7 +111,7 @@ O servidor estará disponível em `http://localhost:8000`.
 ```bash
 DEBUG=False
 ALLOWED_HOSTS=['desafiobackendejectdeploy.pythonanywhere.com']
-SECRET_KEY='django-insecure-*zbc9)!(x*-(+3o6iq)68d+e6s9*tz#-d-m*$%g3o0tsex4tpo'
+SECRET_KEY=chave-super-secreta-para-producao
 ```
 
 Para gerar uma `SECRET_KEY` nova:

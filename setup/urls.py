@@ -16,6 +16,7 @@ router.register('categorias', CategoriaViewSet, basename = 'categorias')
 router.register('variacoes', VariacaoViewSet, basename = 'variacoes')
 router.register('carrinho/itens', CarrinhoViewSet, basename = 'carrinho-itens')
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('carrinho/', CarrinhoViewSet.as_view({'get' : 'list'}), name = 'carrinho-list'),

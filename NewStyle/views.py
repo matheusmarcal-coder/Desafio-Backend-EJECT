@@ -126,7 +126,7 @@ class CarrinhoViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'put', 'delete', 'head', 'options']
     # Organizamos a relação de que, cada cliente acessa apenas o seu próprio carrinho 
     def get_queryset(self):
-        return ItemCarrinho.objects.filter( carrinho__usuario = self.request.user)
+        return ItemCarrinho.objects.filter( carrinho__usuario = self.request.user).order_by('id')
     # Quando um carrinho é criado, salvamos o carrinho no banco de seu respectivo usuário, se o carrinho já exite, ele apenas vê a listagem 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data = request.data)
@@ -148,7 +148,7 @@ class CarrinhoViewSet(viewsets.ModelViewSet):
             quantidade_total = item_no_carrinho.quantidade_itens + quantidade_nova
             if quantidade_total > variacao.estoque:
                  raise ValidationError(
-                      "A quantidade de itens adcionados não pode ultrapassar o estoque da loja"
+                      "A quantidade de itens adicionados não pode ultrapassar o estoque da loja"
                  )
             item_no_carrinho.quantidade_itens = quantidade_total
             item_no_carrinho.save(update_fields=['quantidade_itens'])
@@ -160,6 +160,6 @@ class CarrinhoViewSet(viewsets.ModelViewSet):
             resposta_HTTP = status.HTTP_201_CREATED
         return Response(self.get_serializer(item).data, status= resposta_HTTP)
         # Permite a atualização dos itens do carrinho via PUT, logo, apenas os campos em que o cliente dejesa atualizar(quantidade do item, por exmeplo), sem precisar atualizar tudo de uma única vez (de forma desnecessária), 
-        def update(self, request, *args, **kwargs):
-            kwargs['partial'] = True
-            return super().update(request, *args, **kwargs)
+    def update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return super().update(request, *args, **kwargs)

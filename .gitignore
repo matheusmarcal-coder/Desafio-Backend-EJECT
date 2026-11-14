@@ -1,11 +1,11 @@
-# Credenciais e variáveis de ambiente
-    .env
-    .env.*
+# Credenciais e variaveis de ambiente
+.env
+.env.*
 # Ambiente virtual
-    venv/
-    .venv/
-# Arquivos temporários do Python
-    __pycache__/
-    *.pyc
+venv/
+.venv/
+# Arquivos temporarios do Python
+**/__pycache__/
+**/*.pyc
 # Banco de dados local
-    db.sqlite3
+db.sqlite3

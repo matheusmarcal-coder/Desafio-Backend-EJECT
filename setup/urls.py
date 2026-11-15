@@ -1,12 +1,7 @@
-
-
 from django.contrib import admin
 from django.urls import path, include 
 from NewStyle.views import ClienteViewSet, ProdutoViewSet, CategoriaViewSet, VariacaoViewSet, RegistroView, LoginView, CarrinhoViewSet
 from rest_framework import routers 
-
-
-
 
 
 router = routers.DefaultRouter()
@@ -24,10 +19,9 @@ urlpatterns = [
     path('produtos/<int:Produto_id>/variacoes/', VariacaoViewSet.as_view({ 'post' : 'create'}) ),
     path('produtos/<int:Produto_id>/variacoes/<int:pk>/', VariacaoViewSet.as_view({ 'put' : 'update'}) ),
     
-
-
-#"""Define a URL pattern para login do usuário, mapeando em 'auth/login/' ""
+# Define a URL pattern para login do usuário, mapeando em 'auth/login/' 
     path('auth/login/', LoginView.as_view()),
-#"""Define a URL pattern para registro do usuário, mapeando em 'auth/register/' ""
+
+# Define a URL pattern para registro do usuário, mapeando em 'auth/register/' 
     path('auth/registro/', RegistroView.as_view())
 ]

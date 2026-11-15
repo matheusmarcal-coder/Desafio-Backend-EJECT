@@ -8,7 +8,8 @@ roupas de forma integrada e escalável.
   obs: "Documentação da API: Instruções para acessar o Swagger com
 detalhes dos endpoints."
 ##  Modelo Conceitual de Dados  🚨???🚨🚨???🚨(⚠️OBRIGATÓRIO⚠️)
-<img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d0d5233b-33fe-418a-83a4-ebba3512adca" />
+<img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d97c45b2-2f3e-4d6f-9e83-011da6238d6a" />
+
 
 ## Sobre o Projeto
 A NewStyle é um projeto de desenvolvimento de uma API RESTful para um sistema de e-commerce, contendo clientes, lojistas e produtos. Desse modo, segue as principais funcionalidades implementadas:

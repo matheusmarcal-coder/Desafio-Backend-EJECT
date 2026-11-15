@@ -128,24 +128,34 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 
 
 ## Correspondência entre Endpoints e Mockups
+### Mockup completo: [Mockup NewStyle](https://www.figma.com/design/2x9GdF7zL0uiG6wDUVvAA8/Trainee-26.1---Back-end?node-id=0-1&p=f)
 ### Tabela de Referência - Login, cadastro e recuperar senha 
-  ### Mockup completo: [Mockup NewStyle](https://www.figma.com/design/2x9GdF7zL0uiG6wDUVvAA8/Trainee-26.1---Back-end?node-id=0-1&p=f)
-|Tela/Componente| Descrição | Endpoint da API | Método HTTP |
+  
+|Ação| Descrição | Endpoint da API | Método HTTP |
 |---|---|---|---|
 | **Criar usuário** | Cria um novo usuário por meio do registro de seus dados no sistema. | `/auth/register` | POST |
 |**Login (obter token JWT)**| Realiza o login do usuário e retorna o token de acesso (JWT). | `/auth/login` | POST |
 | **🚨Recuperar senha (etapa 1)**| Envia o e-mail de redefinição de senha para o usuário que esqueceu a senha. | `/auth/forgot-password` | POST
 |**🚨Recuperar senha (etapa 2)**| Confirma a redefinição da senha usando o token enviado por e-mail e define a nova senha. | `/auth/reset-password` | POST
 
+### Tabela de Referência - Gerenciamento de produtos 
+|Ação| Descrição | Endpoint da API | Método HTTP |
+|---|---|---|---|
+  | **Criar produtos** | Cria produtos dentro da loja (apenas lojistas podem criar produtos). | `/produtos` | POST |
+| **Acessar produtos** | Visualiza os produtos dentro da loja (clientes visualizam apenas produtos ativos ; lojistas visualizam produtos ativos e inativos). | `/produtos` | GET |
+|**L**| R. | `/produtos` | GET |
+| **1**| E. | `/produtos/:id` | GET |
+|**2**| C. | `/produtos/:id` | PUT
 
+### Tabela de Referência - Gerenciamento de Variações e Estoque 
+|Ação| Descrição | Endpoint da API | Método HTTP |
+|---|---|---|---|
+  | **Criar variação** | Cria uma variação para um produto específico dentro da loja. (apenas lojistas podem criar variações). | `/produtos/:id/variacoes` | POST|
+|**Atualizar estoque**| Permite atualizar o estoque de uma variação de um produto específico. (apenas lojistas podem atualizar variações)| `/produtos/:id/variacoes/:variacoesId` | PUT
 
-###  Tabela de Referência - Inicio🚨???🚨 (COMPARAR COM SUA API USANDO FOTOS DO FIGMA)
-###  Tabela de Referência - Loja (COMPARAR COM SUA API USANDO FOTOS DO FIGMA)
-###  Tabela de Referência - Sobre Nós🚨???🚨 (COMPARAR COM SUA API USANDO FOTOS DO FIGMA)
-##  Filtros e Buscas - API Theka (FAÇA PARA A SUA API)
-###  Filtros Disponíveis
+###  Filtros e Buscas 
 A API NewStyle oferece diversos filtros para facilitar a busca e organização dos produtos. Abaixo estão os filtros disponíveis e como utilizá-los:
-####  Filtros Básicos
+####  Filtros
 | Parâmetro | Tipo | Descrição | Exemplo |
 |---|---|---|---|
 | `category` | ID | Filtragem por categoria específica | `?category=1` |
@@ -192,5 +202,5 @@ Nome do Projeto/
 ## Autor
 
 ### **Matheus Marçal**
-### Trainee Backend | Estudante do Bacharelado em Ciências e Tecnologia 
-### [GitHub](https://github.com/matheusmarcal-coder)
+#### Trainee Backend | Estudante do Bacharelado em Ciências e Tecnologia 
+#### [GitHub](https://github.com/matheusmarcal-coder)

@@ -1,16 +1,16 @@
-## 🛍️ NewStyle - Back-End
+## NewStyle - Back-End
 ### Objetivo e funcionalidades principais do projeto: 
 > **NewStyle** é uma API RESTful desenvolvida com **Django REST Framework** para gerenciar um sistema de e-commerce voltado para a venda de
 roupas de forma integrada e escalável.
-## 🌐 Acesso
+##  Acesso
 - API Base: [API](https://desafiobackendejectdeploy.pythonanywhere.com/)
 - (⚠️OBRIGATÓRIO⚠️)Documentação Interativa (Swagger): 🚨???🚨🚨???🚨🚨???🚨🚨???🚨
   obs: "Documentação da API: Instruções para acessar o Swagger com
 detalhes dos endpoints."
-## 🗂️ Modelo Conceitual de Dados  🚨???🚨🚨???🚨(⚠️OBRIGATÓRIO⚠️)
+##  Modelo Conceitual de Dados  🚨???🚨🚨???🚨(⚠️OBRIGATÓRIO⚠️)
 <img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d0d5233b-33fe-418a-83a4-ebba3512adca" />
 
-## 📋 Sobre o Projeto
+## Sobre o Projeto
 A NewStyle é um projeto de desenvolvimento de uma API RESTful para um sistema de e-commerce, contendo clientes, lojistas e produtos. Desse modo, segue as principais funcionalidades implementadas:
 - Gerenciamento de usuários
   - Cadastro e autenticação de usuários, sendo diferenciados por papéis: lojistas e clientes. O sistema agrupa os papéis em grupos, com suas respectivas permissões para controlar as operações disponíveis dentro da API.
@@ -19,7 +19,7 @@ A NewStyle é um projeto de desenvolvimento de uma API RESTful para um sistema d
 - Publicação na internet
   - API publicada no PythonAnywhere, apresentando interface navegável do DRF.
 
-## 🧰 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 | Tecnologia | Descrição |
 |---|---|
 | **Python 3.15** | Linguagem principal |
@@ -126,47 +126,47 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 - **Português** para nomes de domínio (models, campos, serializers, views), mantendo em inglês o que é sintaxe do framework (`Meta`, `ForeignKey`, `Serializer`...)
 
 
-## 🧩 Correspondência entre Endpoints e Mockups
-### 📋 Tabela de Referência - Login, cadastro e recuperar senha 
+## Correspondência entre Endpoints e Mockups
+### Tabela de Referência - Login, cadastro e recuperar senha 
   ### Mockup completo: [Mockup NewStyle](https://www.figma.com/design/2x9GdF7zL0uiG6wDUVvAA8/Trainee-26.1---Back-end?node-id=0-1&p=f)
-|Tela/Componente| Imagem | Descrição | Endpoint da API | Método HTTP |
-|---|---|---|---|---|
-| **Criar usuário** | <img width="523" height="426" alt="FIGMA_CADASTRO" src="https://github.com/user-attachments/assets/30171fa6-3ce8-40dc-862f-f4df4addf79b" /> | Cria um novo usuário por meio do registro de seus dados no sistema. | `/auth/register` | POST |
-|**Login (obter token JWT)**| <img width="435" height="403" alt="FIGMA_LOGIN" src="https://github.com/user-attachments/assets/846e1d56-61bc-4642-b889-9b9b95d8198b" /> | Realiza o login do usuário e retorna o token de acesso (JWT). | `/auth/login` | POST |
-| **🚨Recuperar senha (etapa 1)**| <img width="334" height="267" alt="FIGMA_RECUPERACAO_SENHA" src="https://github.com/user-attachments/assets/23a8acbd-5a4a-443c-ac3d-93026528e00b" /> | Envia o e-mail de redefinição de senha para o usuário que esqueceu a senha. | `/auth/forgot-password` | POST
-|**🚨Recuperar senha (etapa 2)**| FOTO???? | Confirma a redefinição da senha usando o token enviado por e-mail e define a nova senha. | `/auth/reset-password` | POST
+|Tela/Componente| Descrição | Endpoint da API | Método HTTP |
+|---|---|---|---|
+| **Criar usuário** | Cria um novo usuário por meio do registro de seus dados no sistema. | `/auth/register` | POST |
+|**Login (obter token JWT)**| Realiza o login do usuário e retorna o token de acesso (JWT). | `/auth/login` | POST |
+| **🚨Recuperar senha (etapa 1)**| Envia o e-mail de redefinição de senha para o usuário que esqueceu a senha. | `/auth/forgot-password` | POST
+|**🚨Recuperar senha (etapa 2)**| Confirma a redefinição da senha usando o token enviado por e-mail e define a nova senha. | `/auth/reset-password` | POST
 
 
 
-### 📋 Tabela de Referência - Inicio🚨???🚨 (COMPARAR COM SUA API USANDO FOTOS DO FIGMA)
-### 📋 Tabela de Referência - Loja (COMPARAR COM SUA API USANDO FOTOS DO FIGMA)
-### 📋 Tabela de Referência - Sobre Nós🚨???🚨 (COMPARAR COM SUA API USANDO FOTOS DO FIGMA)
-## 🔍 Filtros e Buscas - API Theka (FAÇA PARA A SUA API)
-### 📋 Filtros Disponíveis
+###  Tabela de Referência - Inicio🚨???🚨 (COMPARAR COM SUA API USANDO FOTOS DO FIGMA)
+###  Tabela de Referência - Loja (COMPARAR COM SUA API USANDO FOTOS DO FIGMA)
+###  Tabela de Referência - Sobre Nós🚨???🚨 (COMPARAR COM SUA API USANDO FOTOS DO FIGMA)
+##  Filtros e Buscas - API Theka (FAÇA PARA A SUA API)
+###  Filtros Disponíveis
 A API NewStyle oferece diversos filtros para facilitar a busca e organização dos produtos. Abaixo estão os filtros disponíveis e como utilizá-los:
-#### 🎯 Filtros Básicos
+####  Filtros Básicos
 | Parâmetro | Tipo | Descrição | Exemplo |
 |---|---|---|---|
 | `category` | ID | Filtragem por categoria específica | `?category=1` |
 | `min_price` | Decimal | Filtragem por preço maior ou igual ao número inserido | `min_price=70.00` |
 | `max_price` | Decimal | Filtragem por preço menor ou igual ao número inserido | `max_price=90.00` |
-#### 🔍 Busca por Texto
+####  Busca por Texto
 | Parâmetro |	Descrição |	Campos Pesquisados | Exemplo |
 |---|---|---|---|
 | `search` | Busca textual | Título do produto | `search=cargo+azul` | 
-#### 📊 Ordenação
+####  Ordenação
 | Parâmetro |	Descrição |	Campos Disponíveis | Exemplo |
 |---|---|---|---|
 | 🚨???🚨 | 🚨???🚨 |🚨???🚨 | 🚨???🚨 | 
-#### 📄 Paginação
+####  Paginação
 | Parâmetro |	Descrição | Exemplo |
 |---|---|---|
 | `page` | Número da página | `?page=2` | 
 
-## 🔐 Autenticação e Permissões
+##  Autenticação e Permissões
 - **Endpoints de autenticação (`/auth/`)** — responsáveis por login, 🚨 recuperação🚨  e atualização de tokens JWT.  
 - **Endpoints de usuários (`/users/`)** — permitem gerenciar contas e definir permissões específicas para cada usuário.
-## 🧱 Estrutura do Projeto
+##  Estrutura do Projeto
 ```
 Nome do Projeto/
 ├── api/                       # App da API: models, serializers, views e rotas
@@ -188,7 +188,7 @@ Nome do Projeto/
 ├── manage.py                  # Utilitário Django
 └── README.md                  # Este arquivo
 ```
-## 🧑‍💻 Autor
+## Autor
 
 ### **Matheus Marçal**
 ### Trainee Backend | Estudante do Bacharelado em Ciências e Tecnologia 

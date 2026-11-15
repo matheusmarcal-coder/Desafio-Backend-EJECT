@@ -7,7 +7,7 @@ roupas de forma integrada e escalável.
 - (⚠️OBRIGATÓRIO⚠️)Documentação Interativa (Swagger): 🚨???🚨🚨???🚨🚨???🚨🚨???🚨
   obs: "Documentação da API: Instruções para acessar o Swagger com
 detalhes dos endpoints."
-##  Modelo Conceitual de Dados  🚨???🚨🚨???🚨(⚠️OBRIGATÓRIO⚠️)
+##  Modelo Conceitual de Dados 
 <img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d97c45b2-2f3e-4d6f-9e83-011da6238d6a" />
 
 

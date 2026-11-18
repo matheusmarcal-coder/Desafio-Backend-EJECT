@@ -3,8 +3,8 @@
 > **NewStyle** é uma API RESTful desenvolvida com **Django REST Framework** para gerenciar um sistema de e-commerce voltado para a venda de
 roupas de forma integrada e escalável.
 ##  Acesso
-- API Base: [API](https://desafiobackendejectdeploy.pythonanywhere.com/)
-- (⚠️OBRIGATÓRIO⚠️)Documentação Interativa (Swagger): http://127.0.0.1:8000/api/docs/
+- Produção API: [NewStyle](https://desafiobackendejectdeploy.pythonanywhere.com/)
+- Documentação Interativa (Swagger): [http://127.0.0.1:8000/api/docs/](https://desafiobackendejectdeploy.pythonanywhere.com/api/docs/?utm_source=chatgpt.com)
 ##  Modelo Conceitual de Dados 
 <img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d97c45b2-2f3e-4d6f-9e83-011da6238d6a" />
 
@@ -14,7 +14,11 @@ A NewStyle é um projeto de desenvolvimento de uma API RESTful para um sistema d
 - Gerenciamento de usuários
   - Cadastro e autenticação de usuários, sendo diferenciados por papéis: lojistas e clientes. O sistema agrupa os papéis em grupos, com suas respectivas permissões para controlar as operações disponíveis dentro da API.
 - Gerenciamento de produtos
-  - Operações CRUD de produtos, categoria e variações, incluindo informações como: nome, preço, tamanho, cor, estoque e status do produto. 
+  - Operações CRUD de produtos, categoria e variações, incluindo informações como: nome, preço, tamanho, cor, estoque e status do produto.
+- Realização de pedido de produtos
+  - Finalização do carrinho do cliente para a criação do pedido, contendo endereço e método de pagamento escolhidas pelo cliente
+- Documentação da API
+  - Documentação gerada pelo `drf_spectacular`
 - Publicação na internet
   - API publicada no PythonAnywhere, apresentando interface navegável do DRF.
 
@@ -25,14 +29,15 @@ A NewStyle é um projeto de desenvolvimento de uma API RESTful para um sistema d
 | **Django 6.1.2** | Framework Backend |
 | **Django REST Framework 3.18.3** | Criação e gerenciamento de APIs RESTful |
 | **SQLite** | Sistema Gerenciador de Banco de dados relacional  
-## (⚠️OBRIGATÓRIO⚠️)Principais Dependências Utilizadas 
+## Principais Dependências Utilizadas 
 | Dependência | Descrição |
 |---|---|
 |`djangorestframework-simplejwt` -> Versão 5.5.1 | Autenticação via JWT (token)|
 |`PyJWT` -> Versão: 2.15.1 | Codifica e valida tokens JWT |
-|`drf_yasg` -> Versão 1.21.18 | Geração de documentação interativa Swagger |
+|`drf_spectacular` -> Versão 0.30.0 | Geração de documentação interativa Swagger |
+|`django-filter` -> Versão 26.2 | Filtragem de dados nos endpoints |
 
-## (⚠️OBRIGATÓRIO⚠️) ⚙️ Configuração e Instalação
+## Configuração e Instalação
 
 ### Pré-requisitos
 
@@ -102,15 +107,20 @@ O servidor estará disponível em `http://localhost:8000`.
 | `/admin/`   | Painel administrativo do Django       |
 | `/auth/login/`| Login da API navegável         |
 
-### Passo a passo para configurar a instalação:
-🚨NAO ESQUECER AS SEEDS🚨
+### Passo a passo para configurar a instalação (você só pode executar esse passo após a etapa de migrações feitas na parte 5 de "Configuração e instalação"):
+#### 1- Seed do lojista inicial:, você deve executar o comando `python manage.py seed_lojista_inicial`
+#### 2- Seed das categorias disponíveis da NewStyle: você deve executar o comando `python manage.py loaddata categorias.json`
+
+
 
 ### Variáveis de Ambiente para Produção
 
 ```bash
 DEBUG=False
-ALLOWED_HOSTS=['desafiobackendejectdeploy.pythonanywhere.com']
+ALLOWED_HOSTS=desafiobackendejectdeploy.pythonanywhere.com
 SECRET_KEY=chave-super-secreta-para-producao
+LOJISTA_EMAIL=email_lojista@gmail.com
+LOJISTA_SENHA=senha_segura_lojista
 ```
 
 Para gerar uma `SECRET_KEY` nova:
@@ -125,31 +135,71 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 - **Português** para nomes de domínio (models, campos, serializers, views), mantendo em inglês o que é sintaxe do framework (`Meta`, `ForeignKey`, `Serializer`...)
 
 
-## Correspondência entre Endpoints e Mockups
-### Mockup completo: [Mockup NewStyle](https://www.figma.com/design/2x9GdF7zL0uiG6wDUVvAA8/Trainee-26.1---Back-end?node-id=0-1&p=f)
-### Tabela de Referência - Login, cadastro e recuperar senha 
-  
-|Ação| Descrição | Endpoint da API | Método HTTP |
-|---|---|---|---|
-| **Criar usuário** | Cria um novo usuário por meio do registro de seus dados no sistema. | `/auth/register` | POST |
-|**Login (obter token JWT)**| Realiza o login do usuário e retorna o token de acesso (JWT). | `/auth/login` | POST |
-| **🚨Recuperar senha (etapa 1)**| Envia o e-mail de redefinição de senha para o usuário que esqueceu a senha. | `/auth/forgot-password` | POST
-|**🚨Recuperar senha (etapa 2)**| Confirma a redefinição da senha usando o token enviado por e-mail e define a nova senha. | `/auth/reset-password` | POST
+## Principais endpoints e suas devidas descrições de funcionalidade
+### Mockup completo de base para o projeto: [Mockup NewStyle](https://www.figma.com/design/2x9GdF7zL0uiG6wDUVvAA8/Trainee-26.1---Back-end?node-id=0-1&p=f) 
+### Autenticação, registro e redefinição de senha
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+|POST | `/auth/register/` | Cria um novo usuário por meio do registro de seus dados no sistema. |
+|POST | `/auth/login/` | Realiza o login do usuário e retorna o token de acesso (JWT). |
+| POST | 🚨`/auth/forgot-password/` | Envia o e-mail de redefinição de senha para o usuário que esqueceu a senha. | 
+| POST | 🚨`/auth/reset-password/` | Confirma a redefinição da senha usando o token enviado por e-mail e define a nova senha. |
 
-### Tabela de Referência - Gerenciamento de produtos 
-|Ação| Descrição | Endpoint da API | Método HTTP |
-|---|---|---|---|
-  | **Criar produtos** | Cria produtos dentro da loja (apenas lojistas podem criar produtos). | `/produtos` | POST |
-| **Acessar produtos** | Visualiza os produtos dentro da loja (clientes visualizam apenas produtos ativos ; lojistas visualizam produtos ativos e inativos). | `/produtos` | GET |
-|**L**| R. | `/produtos` | GET |
-| **1**| E. | `/produtos/:id` | GET |
-|**2**| C. | `/produtos/:id` | PUT
+### Gerenciamento de categorias 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/categorias/` |  Mostra as categorias presentes dentro da loja. (Lojistas e clientes vizualizam). |
+| POST | `/categorias/` |  Cria uma categroria. (apenas lojistas podem criar categorias). |  
+| GET | `/categorias/{id}/` |  Mostra uma categoria específica dentro da loja. (Lojistas e clientes vizualizam). |
+| PUT | `/categorias/{id}/` | Atualiza os dados de uma categoria específica. (apenas lojistas podem atualizar categorias).| 
+| PATCH | `/categorias/{id}/` |  Permite atualizar paricalmente os dados de uma categoria específica. (apenas lojistas podem atualizar categorias).| 
 
-### Tabela de Referência - Gerenciamento de Variações e Estoque 
-|Ação| Descrição | Endpoint da API | Método HTTP |
-|---|---|---|---|
-  | **Criar variação** | Cria uma variação para um produto específico dentro da loja. (apenas lojistas podem criar variações). | `/produtos/:id/variacoes` | POST|
-|**Atualizar estoque**| Permite atualizar o estoque de uma variação de um produto específico. (apenas lojistas podem atualizar variações)| `/produtos/:id/variacoes/:variacoesId` | PUT
+### Gerenciamento de produtos 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| **POST** | `/produtos/` | Cria produtos dentro da loja (apenas lojistas podem criar produtos). |
+| **GET** | `/produtos/` |  Visualiza os produtos dentro da loja (clientes visualizam apenas produtos ativos ; lojistas visualizam produtos ativos e inativos).|
+|**GET** | `/produtos/{id}/` | Vizualiza um produto específico. |
+| **PUT** | `/produtos/{id}/` | Permite atualizar os dados dentro do produto (apenas lojistas).|
+| **PATCH** | `/produtos/{id}/` | Permite atualizar parcialmente os dados do produto, assim como o status do produto (ativo/inativo ; apenas lojistas).|
+
+### Gerenciamento de variações 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/variacoes/` |  Mostra as variações presentes dentro da loja, independente do produto. (Lojistas e clientes vizualizam). |
+| POST | `/variacoes/` |  Cria uma variação associada a um produto dentro da loja. (apenas lojistas podem criar variações). |  
+| GET | `/variacoes/{id}/` |  Mostra uma variação específica dentro da loja. (Lojistas e clientes vizualizam). |
+| PUT | `/variacoes/{id}/` | Atualiza os dados de uma variação específica. (apenas lojistas podem atualizar variações).| 
+| PATCH | `/variacoes/{id}/` |  Permite atualizar paricalmente os dados de uma variação específica, assim como o estoque de uma variação específica. (apenas lojistas podem atualizar variações).| 
+
+### Gerenciamento de carrinho 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/carrinho/` |  Permite vizualiar o carrinho (apenas usuário autenticados, logo: clientes e lojistas). |
+| GET | `/carrinho/itens/` |  Mostra os itens que estão dentro do carrinho.|
+| POST | `/carrinho/itens/` |  Adciona uma variação de produto dentro do carrinho. |  
+| GET | `/carrinho/itens/{id}/` |  Mostra um item específico do carrinho. |
+| PUT | `/carrinho/itens/{id}/` | Atualiza os dados de um item específico do carrinho, como sua quantidade. | 
+| PATCH | `/carrinho/itens/{id}/` |  Permite atualizar paricalmente os itens de um carrinho , assim como a quantidade da variação desejada.| 
+| DELETE | `/carrinho/itens/{id}/` |  Permite remover algum item do carrinho.| 
+| PATCH | `/carrinho/itens/finalizar/` | Finaliza o carrinho, iniciando a criação do pedido.| 
+
+### Gerenciamento de clientes 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/clientes/` |  Permite vizualiar os clientes cadastrados (apenas lojistas) ; Quando este é um cliente, acessa apenas seus próprios dados. |
+| GET | `/clientes/{id}/` | consulta os dados de um cliente específico (apenas lojistas). |
+
+### Gerenciamento de pedidos
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/pedidos/` | Lista os pedidos disponíveis (lojista vizualiza pedidos ativos, enquanto o cliente vizualiza apenas o próprio pedido).|
+| POST | `/pedidos/` |  Cria um novo pedido. |  
+| GET | `/pedidos/{id}/` |  Permite consultar um pedido específico com seus dados. |
+| PATCH | `/pedidos/{id}/` |  Permite atualizar paricalmente os dados de um pedido, assim como o seu status de entrega.| 
+
+
+
 
 ###  Filtros e Buscas 
 A API NewStyle oferece diversos filtros para facilitar a busca e organização dos produtos. Abaixo estão os filtros disponíveis e como utilizá-los:
@@ -163,10 +213,6 @@ A API NewStyle oferece diversos filtros para facilitar a busca e organização d
 | Parâmetro |	Descrição |	Campos Pesquisados | Exemplo |
 |---|---|---|---|
 | `search` | Busca textual | Título do produto | `search=cargo+azul` | 
-####  Ordenação
-| Parâmetro |	Descrição |	Campos Disponíveis | Exemplo |
-|---|---|---|---|
-| 🚨???🚨 | 🚨???🚨 |🚨???🚨 | 🚨???🚨 | 
 ####  Paginação
 | Parâmetro |	Descrição | Exemplo |
 |---|---|---|
@@ -174,11 +220,11 @@ A API NewStyle oferece diversos filtros para facilitar a busca e organização d
 
 ##  Autenticação e Permissões
 - **Endpoints de autenticação (`/auth/`)** — responsáveis por login, 🚨 recuperação🚨  e atualização de tokens JWT.  
-- **Endpoints de usuários (`/users/`)** — permitem gerenciar contas e definir permissões específicas para cada usuário.
+- **Endpoints de usuários (`/clientes/`)** — permitem gerenciar contas e definir permissões específicas para cada usuário.
 ##  Estrutura do Projeto
 ```
-Nome do Projeto/
-├── api/                       # App da API: models, serializers, views e rotas
+Desafio-Backend-EJECT/
+├── NewStyle/                       # App da API: models, serializers, views e rotas
 │   ├── migrations/
 │   ├── admin.py
 │   ├── models.py
@@ -189,14 +235,15 @@ Nome do Projeto/
 ├── setup/                     # Configurações do Django
 │   ├── settings.py
 │   └── urls.py
-├── 🚨.env.example               # Modelo das variáveis de ambiente🚨
-├── 🚨Dockerfile🚨
-├── 🚨docker-compose.yml🚨
-├── 🚨ruff.toml                  # Configuração do Ruff🚨
+├── .env.example               # Modelo das variáveis de ambiente
 ├── requirements.txt           # Dependências Python
 ├── manage.py                  # Utilitário Django
 └── README.md                  # Este arquivo
 ```
+## Aprendizado e Referências
+Este projeto foi desenvolvido de forma paralela com o aprendizado da ferramenta Django REST Framework por meio dos cursos disponibilizados pela Alura.
+O projeto foi criado com o auxílio da IA ChatGPT como ferramenta de apoio técnico, explicação de conceitos, entendimento dos sistemas presentes nas regras de negócio, e como ferramenta de aprendizado complementar ao curso da Alura. O código foi compreendido, implementado, testado e julgado de forma crítica por mim em cada caso de uso requisitado pelo edital.  
+
 ## Autor
 
 ### **Matheus Marçal**

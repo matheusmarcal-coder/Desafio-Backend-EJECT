@@ -173,10 +173,6 @@ A API NewStyle oferece diversos filtros para facilitar a busca e organização d
 | Parâmetro |	Descrição |	Campos Pesquisados | Exemplo |
 |---|---|---|---|
 | `search` | Busca textual | Título do produto | `search=cargo+azul` | 
-####  Ordenação
-| Parâmetro |	Descrição |	Campos Disponíveis | Exemplo |
-|---|---|---|---|
-| 🚨???🚨 | 🚨???🚨 |🚨???🚨 | 🚨???🚨 | 
 ####  Paginação
 | Parâmetro |	Descrição | Exemplo |
 |---|---|---|
@@ -199,10 +195,7 @@ Nome do Projeto/
 ├── setup/                     # Configurações do Django
 │   ├── settings.py
 │   └── urls.py
-├── 🚨.env.example               # Modelo das variáveis de ambiente🚨
-├── 🚨Dockerfile🚨
-├── 🚨docker-compose.yml🚨
-├── 🚨ruff.toml                  # Configuração do Ruff🚨
+├── .env.example               # Modelo das variáveis de ambiente
 ├── requirements.txt           # Dependências Python
 ├── manage.py                  # Utilitário Django
 └── README.md                  # Este arquivo

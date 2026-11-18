@@ -135,31 +135,71 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 - **Português** para nomes de domínio (models, campos, serializers, views), mantendo em inglês o que é sintaxe do framework (`Meta`, `ForeignKey`, `Serializer`...)
 
 
-## Correspondência entre Endpoints e Mockups
-### Mockup completo: [Mockup NewStyle](https://www.figma.com/design/2x9GdF7zL0uiG6wDUVvAA8/Trainee-26.1---Back-end?node-id=0-1&p=f)
-### Tabela de Referência - Login, cadastro e recuperar senha 
-  
-|Ação| Descrição | Endpoint da API | Método HTTP |
-|---|---|---|---|
-| **Criar usuário** | Cria um novo usuário por meio do registro de seus dados no sistema. | `/auth/register` | POST |
-|**Login (obter token JWT)**| Realiza o login do usuário e retorna o token de acesso (JWT). | `/auth/login` | POST |
-| **🚨Recuperar senha (etapa 1)**| Envia o e-mail de redefinição de senha para o usuário que esqueceu a senha. | `/auth/forgot-password` | POST
-|**🚨Recuperar senha (etapa 2)**| Confirma a redefinição da senha usando o token enviado por e-mail e define a nova senha. | `/auth/reset-password` | POST
+## Principais endpoints e suas devidas descrições de funcionalidade
+### Mockup completo de base para o projeto: [Mockup NewStyle](https://www.figma.com/design/2x9GdF7zL0uiG6wDUVvAA8/Trainee-26.1---Back-end?node-id=0-1&p=f) 
+### Endpoints de autenticação, registro e redefinição de senha
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+|POST | `/auth/register/` | Cria um novo usuário por meio do registro de seus dados no sistema. |
+|POST | `/auth/login/` | Realiza o login do usuário e retorna o token de acesso (JWT). |
+| POST | 🚨`/auth/forgot-password/` | Envia o e-mail de redefinição de senha para o usuário que esqueceu a senha. | 
+| POST | 🚨`/auth/reset-password/` | Confirma a redefinição da senha usando o token enviado por e-mail e define a nova senha. |
 
-### Tabela de Referência - Gerenciamento de produtos 
-|Ação| Descrição | Endpoint da API | Método HTTP |
-|---|---|---|---|
-| **Criar produtos** | Cria produtos dentro da loja (apenas lojistas podem criar produtos). | `/produtos` | POST |
-| **Acessar produtos** | Visualiza os produtos dentro da loja (clientes visualizam apenas produtos ativos ; lojistas visualizam produtos ativos e inativos). | `/produtos` | GET |
-|**L**| R. | `/produtos` | GET |
-| **1**| E. | `/produtos/:id` | GET |
-|**2**| C. | `/produtos/:id` | PUT
+### Gerenciamento de categorias 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/categorias/` |  Mostra as categorias presentes dentro da loja. (Lojistas e clientes vizualizam). |
+| POST | `/categorias/` |  Cria uma categroria. (apenas lojistas podem criar categorias). |  
+| GET | `/categorias/{id}/` |  Mostra uma categoria específica dentro da loja. (Lojistas e clientes vizualizam). |
+| PUT | `/categorias/{id}/` | Atualiza os dados de uma categoria específica. (apenas lojistas podem atualizar categorias)| 
+| PATCH | `/categorias/{id}/` |  Permite atualizar paricalmente os dados de uma categoria específica. (apenas lojistas podem atualizar categorias)| 
 
-### Tabela de Referência - Gerenciamento de Variações e Estoque 
-|Ação| Descrição | Endpoint da API | Método HTTP |
-|---|---|---|---|
-  | **Criar variação** | Cria uma variação para um produto específico dentro da loja. (apenas lojistas podem criar variações). | `/produtos/:id/variacoes` | POST|
-|**Atualizar estoque**| Permite atualizar o estoque de uma variação de um produto específico. (apenas lojistas podem atualizar variações)| `/produtos/:id/variacoes/:variacoesId` | PUT
+### Gerenciamento de produtos 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| **POST** | `/produtos/` | Cria produtos dentro da loja (apenas lojistas podem criar produtos). |
+| **GET** | `/produtos/` |  Visualiza os produtos dentro da loja (clientes visualizam apenas produtos ativos ; lojistas visualizam produtos ativos e inativos).|
+|**GET** | `/produtos/{id}/` | Vizualiza um produto específico |
+| **PUT** | `/produtos/{id}/` | Permite atualizar os dados dentro do produto (apenas lojistas)|
+| **PATCH** | `/produtos/{id}/` | Permite atualizar parcialmente os dados do produto, assim como o status do produto (ativo/inativo ; apenas lojistas)|
+
+### Gerenciamento de Variações 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/variacoes/` |  Mostra as variações presentes dentro da loja, independente do produto. (Lojistas e clientes vizualizam). |
+| POST | `/variacoes/` |  Cria uma variação associada a um produto dentro da loja. (apenas lojistas podem criar variações). |  
+| GET | `/variacoes/{id}/` |  Mostra uma variação específica dentro da loja. (Lojistas e clientes vizualizam). |
+| PUT | `/variacoes/{id}/` | Atualiza os dados de uma variação específica. (apenas lojistas podem atualizar variações)| 
+| PATCH | `/variacoes/{id}/` |  Permite atualizar paricalmente os dados de uma variação específica, assim como o estoque de uma variação específica. (apenas lojistas podem atualizar variações)| 
+
+### Gerenciamento de Carrinho 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/carrinho/` |  Permite vizualiar o carrinho (apenas usuário autenticados, logo: clientes e lojistas). |
+| GET | `/carrinho/itens/` |  Mostra os itens que estão dentro do carrinho|
+| POST | `/carrinho/itens/` |  Adciona uma variação de produto dentro do carrinho. |  
+| GET | `/carrinho/itens/{id}/` |  Mostra um item específico do carrinho. |
+| PUT | `/carrinho/itens/{id}/` | Atualiza os dados de um item específico do carrinho, como sua quantidade. | 
+| PATCH | `/carrinho/itens/{id}/` |  Permite atualizar paricalmente os itens de um carrinho , assim como a quantidade da variação desejada| 
+| DELETE | `/carrinho/itens/{id}/` |  Permite remover algum item do carrinho| 
+| PATCH | `/carrinho/itens/finalizar/` | Finaliza o carrinho, iniciando a criação do pedido| 
+
+### Gerenciamento de Clientes 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/clientes/` |  Permite vizualiar os clientes cadastrados (apenas lojistas) ; Quando este é um cliente, acessa apenas seus próprios dados. |
+| GET | `/clientes/{id}/` | consulta os dados de um cliente específico (apenas lojistas). |
+
+### Gerenciamento de Pedidos
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/pedidos/` | Lista os pedidos disponíveis (lojista vizualiza pedidos ativos, enquanto o cliente vizualiza apenas o próprio pedido)|
+| POST | `/pedidos/` |  Cria um novo pedido. |  
+| GET | `/pedidos/{id}/` |  Permite consultar um pedido específico com seus dados. |
+| PATCH | `/pedidos/{id}/` |  Permite atualizar paricalmente os dados de um pedido, assim como o seu status de entrega| 
+
+
+
 
 ###  Filtros e Buscas 
 A API NewStyle oferece diversos filtros para facilitar a busca e organização dos produtos. Abaixo estão os filtros disponíveis e como utilizá-los:

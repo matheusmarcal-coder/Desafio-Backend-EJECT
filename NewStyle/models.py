@@ -107,6 +107,22 @@ class ItemCarrinho(models.Model):
         ]
 
 
+class MetodoPagamento(models.Model):
+    # Métodos de pagamento disponíveis para a compra do pedido
+    PAGAMENTO_CHOICES = [
+        ('pix', 'PIX'),
+        ('credito', 'Crédito'),
+        ('debito', 'Débito'),
+    ]
+    apelido = models.CharField(max_length=255)
+    usuario = models.ForeignKey(Usuario, on_delete = models.CASCADE, related_name='metodos_pagamento' )
+    tipo_pagamento = models.CharField(max_length=10, choices=PAGAMENTO_CHOICES)
+    cartao_final = models.CharField(max_length=4, blank = True)
+
+    def __str__(self):
+        return f"{self.usuario.username} | {self.tipo_pagamento}"
+
+    
 class Pedido (models.Model):
     # Status rascunho para quando o cliente finaliza o carrinho mas ainda não realizou o pedido (o carrinho é esvaziado, mas o pedido é guardado no rascunho)
     STATUS_CHOICES = [
@@ -117,6 +133,7 @@ class Pedido (models.Model):
         ('entregue','ENTREGUE'),
         ('cancelado','CANCELADO')
     ]
+
     usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT)
     status = models.CharField(max_length=20, choices = STATUS_CHOICES, default = 'rascunho')
 
@@ -127,8 +144,10 @@ class Pedido (models.Model):
     cidade_entrega = models.CharField(max_length=255, blank = True)
     uf_entrega = models.CharField(max_length=2, blank = True)
 
-    metodo_pagamento = models.CharField(max_length=10, blank = True)
+    metodo_pagamento = models.CharField(max_length=10, choices = MetodoPagamento.PAGAMENTO_CHOICES ,blank = True)
     pedido_criado = models.DateTimeField(auto_now_add=True)
+
+    
 
 
 class ItemPedido(models.Model):

@@ -1,11 +1,11 @@
-from NewStyle.models import Cliente, Produto, Categoria, Usuario, Variacao, ItemCarrinho, Carrinho, Pedido, ItemPedido
-from NewStyle.serializers import ClienteSerializer, ProdutoSerializer, CategoriaSerializer, VariacaoSerializer, RegistroSerializer, ItemCarrinhoSerializer, LoginSerializer, PedidoSerializer, ConfirmarPedidoSerializer, AtualizarStatusPedidoSerializer
+from NewStyle.models import Cliente, Produto, Categoria, Usuario, Variacao, ItemCarrinho, Carrinho, Pedido, ItemPedido, MetodoPagamento
+from NewStyle.serializers import ClienteSerializer, ProdutoSerializer, CategoriaSerializer, VariacaoSerializer, RegistroSerializer, ItemCarrinhoSerializer, LoginSerializer, PedidoSerializer, ConfirmarPedidoSerializer, AtualizarStatusPedidoSerializer, MetodoPagamentoSerializer, EsqueciSenhaSerializer, RedefinirSenhaSerializer
 from rest_framework import viewsets, status 
 from rest_framework.views import APIView 
 from rest_framework.response import Response 
 from rest_framework.permissions import AllowAny, DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated 
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from decimal import Decimal, InvalidOperation
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,6 +14,14 @@ from drf_spectacular.utils import extend_schema
 from django.db import transaction
 from rest_framework.decorators import action
 from django.db.models import F
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+import re
+from django.contrib.auth.password_validation import validate_password
 
 # Validação dos dados do login via token (JWT)
 class LoginView(TokenObtainPairView):
@@ -79,6 +87,8 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all().order_by('id')
     serializer_class = CategoriaSerializer
+    def destroy(self, request, *args, **kwargs):
+         raise MethodNotAllowed("DELETE")
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
 
@@ -239,6 +249,10 @@ class PedidoViewSet(viewsets.ModelViewSet):
         # Valida os dados enviados no pedido 
         serializer = ConfirmarPedidoSerializer(data = request.data)
         serializer.is_valid(raise_exception = True)
+        # Verificamos se ao fazer o pedido, o usuário já tem um método de pagamento cadastrado ou não 
+        metodo = MetodoPagamento.objects.filter(id = serializer.validated_data['metodo_pagamento_id'], usuario = request.user).first()
+        if metodo is None:
+             return Response({'erro' : 'O método de pagamento deste pedido não está cadastrado ou é inválido'}, status = status.HTTP_400_BAD_REQUEST)
 
         with transaction.atomic():
 
@@ -274,7 +288,7 @@ class PedidoViewSet(viewsets.ModelViewSet):
             pedido.cidade_entrega =serializer.validated_data['cidade_entrega']
             pedido.uf_entrega =serializer.validated_data['uf_entrega']
 
-            pedido.metodo_pagamento = serializer.validated_data['metodo_pagamento']
+            pedido.metodo_pagamento = metodo.tipo_pagamento
 
             pedido.status = 'pendente'
 
@@ -335,3 +349,85 @@ class PedidoViewSet(viewsets.ModelViewSet):
         },
             status = status.HTTP_200_OK
         )
+
+
+class MetodoPagamentoViewSet(viewsets.ModelViewSet):
+     serializer_class = MetodoPagamentoSerializer
+     permission_classes = [IsAuthenticated]
+     http_method_names = ['get', 'post', 'delete','head', 'options']
+
+     def get_queryset(self):
+          # O usuário autenticado acessa apenas os próprios métodos de pagamento
+          return MetodoPagamento.objects.filter( usuario = self.request.user )
+     def perform_create(self, serializer):
+          serializer.save(usuario = self.request.user)
+
+
+class EsqueciSenhaView(APIView):
+     permission_classes = [AllowAny]
+     serializer_class = EsqueciSenhaSerializer
+
+     def post(self, request):
+        serializer = self.serializer_class(data = request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+
+        Usuario = get_user_model()
+        usuario = Usuario.objects.filter(email__iexact=email, is_active = True).first()
+
+        if usuario:
+               uid = urlsafe_base64_encode(force_bytes(usuario.pk))
+               token = default_token_generator.make_token(usuario)
+
+               link = (f"{settings.FRONTEND_RESET_URL}"
+                       f"?uid={uid}&token={token}"
+                       )
+
+               send_mail(
+                    subject = "Recuperação de senha da loja NewStyle",
+                    message = f"Para que você consiga redefinir sua senha, acesse o link: {link}",
+                    from_email = settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[usuario.email],
+                    fail_silently=False
+               )
+            # Exibe a mesma mensagem, independente se o email exista ou não
+        return Response({"mensagem" : "Se o e-mail estiver cadastrado, você receberá um link de recuperação"}, status = status.HTTP_200_OK)
+
+
+class RedefinirSenhaView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = RedefinirSenhaSerializer
+
+    @extend_schema(request=RedefinirSenhaSerializer)
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+    
+        uid = serializer.validated_data['uid']
+        token = serializer.validated_data['token']
+        nova_senha = serializer.validated_data['nova_senha']
+
+        try:
+               usuario_id = force_str(urlsafe_base64_decode(uid))
+               usuario = Usuario.objects.get(pk=usuario_id)
+
+        except (ValueError, TypeError, OverflowError, Usuario.DoesNotExist):
+                return Response({"erro" : "Link de recuperação inválido"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not default_token_generator.check_token(usuario, token):
+             return Response({"erro" : "Token inválido ou expirado"}, status = status.HTTP_400_BAD_REQUEST)
+        # Verificando a força mínima da senha redefinida
+        if not (re.search(r'[A-Z]', nova_senha) and re.search(r'[a-z]', nova_senha) and re.search(r'[0-9]', nova_senha) and re.search(r'[^a-zA-Z0-9]', nova_senha)): 
+             return Response({"nova senha" : ["A sua nova senha deve conter letras maiúsculas, minúsculas, números e caractere especial"]}, status = status.HTTP_400_BAD_REQUEST)
+
+        try:
+            validate_password(nova_senha, usuario)
+        except ValidationError as erro:
+             return Response ({"nova senha" : erro.messages}, status=status.HTTP_400_BAD_REQUEST)
+        # Salva a nova senha inserida na conta do usuário
+        usuario.set_password(nova_senha)
+        usuario.save(update_fields=['password'])
+
+        return Response({"mensagem" : "Senha redefinida com sucesso!"}, status=status.HTTP_200_OK)
+             

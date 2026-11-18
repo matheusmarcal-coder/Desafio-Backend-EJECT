@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NewStyle.models import Cliente, Produto, Categoria, Variacao, Usuario, ItemCarrinho, ItemPedido, Pedido
+from NewStyle.models import Cliente, Produto, Categoria, Variacao, Usuario, ItemCarrinho, ItemPedido, Pedido,  MetodoPagamento
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer 
 
@@ -150,8 +150,8 @@ class ConfirmarPedidoSerializer(serializers.Serializer):
     cidade_entrega = serializers.CharField(max_length=255)
     uf_entrega = serializers.CharField(max_length=2, min_length = 2)
 
-    
-    metodo_pagamento = serializers.CharField(max_length = 10)
+    # Identifica o metodo de pagamento selecionado pelo cliente por ID
+    metodo_pagamento_id = serializers.IntegerField(min_value = 1)
 
     def valitade_cep_entrega(self,value):
         if not value.isdigit():
@@ -163,3 +163,33 @@ class AtualizarStatusPedidoSerializer(serializers.Serializer):
     status = serializers.ChoiceField(  
         choices = ['confirmado', 'enviado','entregue','cancelado']
     )
+
+
+class MetodoPagamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MetodoPagamento
+        fields = ['id', 'tipo_pagamento', 'cartao_final', 'apelido']
+        read_only_fields = ['id']
+
+    def validate(self, attrs):
+        tipo = attrs.get('tipo_pagamento')
+        cartao = attrs.get ('cartao_final', '')
+        # Quando o tipo de pagamento escohido é cartão (crédito ou débito), o usuário deve digitar os últimos números do cartão (devem ser obrigatóriamente 4 dígitos e o campo deve apresentar apenas números)
+        if tipo in ['credito', 'debito']:
+            if len(cartao) != 4 or not cartao.isdigit():
+                raise serializers.ValidationError({'cartao_final' : 'Informe apenas os 4 últimos dígitos do seu cartão.'})
+
+        elif tipo == 'pix':
+            attrs['cartao_final'] = ''
+
+        return attrs
+
+
+class EsqueciSenhaSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class RedefinirSenhaSerializer(serializers.Serializer):
+    uid= serializers.CharField()
+    token= serializers.CharField()
+    nova_senha= serializers.CharField(write_only=True)

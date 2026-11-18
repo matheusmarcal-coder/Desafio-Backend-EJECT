@@ -137,7 +137,7 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 
 ## Principais endpoints e suas devidas descrições de funcionalidade
 ### Mockup completo de base para o projeto: [Mockup NewStyle](https://www.figma.com/design/2x9GdF7zL0uiG6wDUVvAA8/Trainee-26.1---Back-end?node-id=0-1&p=f) 
-### Endpoints de autenticação, registro e redefinição de senha
+### Autenticação, registro e redefinição de senha
 |Método HTTP | Endpoint da API | Descrição |
 |---|---|---|
 |POST | `/auth/register/` | Cria um novo usuário por meio do registro de seus dados no sistema. |
@@ -151,52 +151,52 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 | GET | `/categorias/` |  Mostra as categorias presentes dentro da loja. (Lojistas e clientes vizualizam). |
 | POST | `/categorias/` |  Cria uma categroria. (apenas lojistas podem criar categorias). |  
 | GET | `/categorias/{id}/` |  Mostra uma categoria específica dentro da loja. (Lojistas e clientes vizualizam). |
-| PUT | `/categorias/{id}/` | Atualiza os dados de uma categoria específica. (apenas lojistas podem atualizar categorias)| 
-| PATCH | `/categorias/{id}/` |  Permite atualizar paricalmente os dados de uma categoria específica. (apenas lojistas podem atualizar categorias)| 
+| PUT | `/categorias/{id}/` | Atualiza os dados de uma categoria específica. (apenas lojistas podem atualizar categorias).| 
+| PATCH | `/categorias/{id}/` |  Permite atualizar paricalmente os dados de uma categoria específica. (apenas lojistas podem atualizar categorias).| 
 
 ### Gerenciamento de produtos 
 |Método HTTP | Endpoint da API | Descrição |
 |---|---|---|
 | **POST** | `/produtos/` | Cria produtos dentro da loja (apenas lojistas podem criar produtos). |
 | **GET** | `/produtos/` |  Visualiza os produtos dentro da loja (clientes visualizam apenas produtos ativos ; lojistas visualizam produtos ativos e inativos).|
-|**GET** | `/produtos/{id}/` | Vizualiza um produto específico |
-| **PUT** | `/produtos/{id}/` | Permite atualizar os dados dentro do produto (apenas lojistas)|
-| **PATCH** | `/produtos/{id}/` | Permite atualizar parcialmente os dados do produto, assim como o status do produto (ativo/inativo ; apenas lojistas)|
+|**GET** | `/produtos/{id}/` | Vizualiza um produto específico. |
+| **PUT** | `/produtos/{id}/` | Permite atualizar os dados dentro do produto (apenas lojistas).|
+| **PATCH** | `/produtos/{id}/` | Permite atualizar parcialmente os dados do produto, assim como o status do produto (ativo/inativo ; apenas lojistas).|
 
-### Gerenciamento de Variações 
+### Gerenciamento de variações 
 |Método HTTP | Endpoint da API | Descrição |
 |---|---|---|
 | GET | `/variacoes/` |  Mostra as variações presentes dentro da loja, independente do produto. (Lojistas e clientes vizualizam). |
 | POST | `/variacoes/` |  Cria uma variação associada a um produto dentro da loja. (apenas lojistas podem criar variações). |  
 | GET | `/variacoes/{id}/` |  Mostra uma variação específica dentro da loja. (Lojistas e clientes vizualizam). |
-| PUT | `/variacoes/{id}/` | Atualiza os dados de uma variação específica. (apenas lojistas podem atualizar variações)| 
-| PATCH | `/variacoes/{id}/` |  Permite atualizar paricalmente os dados de uma variação específica, assim como o estoque de uma variação específica. (apenas lojistas podem atualizar variações)| 
+| PUT | `/variacoes/{id}/` | Atualiza os dados de uma variação específica. (apenas lojistas podem atualizar variações).| 
+| PATCH | `/variacoes/{id}/` |  Permite atualizar paricalmente os dados de uma variação específica, assim como o estoque de uma variação específica. (apenas lojistas podem atualizar variações).| 
 
-### Gerenciamento de Carrinho 
+### Gerenciamento de carrinho 
 |Método HTTP | Endpoint da API | Descrição |
 |---|---|---|
 | GET | `/carrinho/` |  Permite vizualiar o carrinho (apenas usuário autenticados, logo: clientes e lojistas). |
-| GET | `/carrinho/itens/` |  Mostra os itens que estão dentro do carrinho|
+| GET | `/carrinho/itens/` |  Mostra os itens que estão dentro do carrinho.|
 | POST | `/carrinho/itens/` |  Adciona uma variação de produto dentro do carrinho. |  
 | GET | `/carrinho/itens/{id}/` |  Mostra um item específico do carrinho. |
 | PUT | `/carrinho/itens/{id}/` | Atualiza os dados de um item específico do carrinho, como sua quantidade. | 
-| PATCH | `/carrinho/itens/{id}/` |  Permite atualizar paricalmente os itens de um carrinho , assim como a quantidade da variação desejada| 
-| DELETE | `/carrinho/itens/{id}/` |  Permite remover algum item do carrinho| 
-| PATCH | `/carrinho/itens/finalizar/` | Finaliza o carrinho, iniciando a criação do pedido| 
+| PATCH | `/carrinho/itens/{id}/` |  Permite atualizar paricalmente os itens de um carrinho , assim como a quantidade da variação desejada.| 
+| DELETE | `/carrinho/itens/{id}/` |  Permite remover algum item do carrinho.| 
+| PATCH | `/carrinho/itens/finalizar/` | Finaliza o carrinho, iniciando a criação do pedido.| 
 
-### Gerenciamento de Clientes 
+### Gerenciamento de clientes 
 |Método HTTP | Endpoint da API | Descrição |
 |---|---|---|
 | GET | `/clientes/` |  Permite vizualiar os clientes cadastrados (apenas lojistas) ; Quando este é um cliente, acessa apenas seus próprios dados. |
 | GET | `/clientes/{id}/` | consulta os dados de um cliente específico (apenas lojistas). |
 
-### Gerenciamento de Pedidos
+### Gerenciamento de pedidos
 |Método HTTP | Endpoint da API | Descrição |
 |---|---|---|
-| GET | `/pedidos/` | Lista os pedidos disponíveis (lojista vizualiza pedidos ativos, enquanto o cliente vizualiza apenas o próprio pedido)|
+| GET | `/pedidos/` | Lista os pedidos disponíveis (lojista vizualiza pedidos ativos, enquanto o cliente vizualiza apenas o próprio pedido).|
 | POST | `/pedidos/` |  Cria um novo pedido. |  
 | GET | `/pedidos/{id}/` |  Permite consultar um pedido específico com seus dados. |
-| PATCH | `/pedidos/{id}/` |  Permite atualizar paricalmente os dados de um pedido, assim como o seu status de entrega| 
+| PATCH | `/pedidos/{id}/` |  Permite atualizar paricalmente os dados de um pedido, assim como o seu status de entrega.| 
 
 
 

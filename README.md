@@ -240,6 +240,10 @@ Desafio-Backend-EJECT/
 ├── manage.py                  # Utilitário Django
 └── README.md                  # Este arquivo
 ```
+## Aprendizado e Referências
+Este projeto foi desenvolvido de forma paralela com o aprendizado da ferramenta Django REST Framework por meio dos cursos disponibilizados pela Alura.
+O projeto foi criado com o auxílio da IA ChatGPT como ferramenta de apoio técnico, explicação de conceitos, entendimento dos sistemas presentes nas regras de negócio, e como ferramenta de aprendizado complementar ao curso da Alura. O código foi compreendido, implementado, testado e julgado de forma crítica por mim em cada caso de uso requisitado pelo edital.  
+
 ## Autor
 
 ### **Matheus Marçal**

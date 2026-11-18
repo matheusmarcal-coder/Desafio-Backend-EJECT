@@ -3,8 +3,8 @@
 > **NewStyle** é uma API RESTful desenvolvida com **Django REST Framework** para gerenciar um sistema de e-commerce voltado para a venda de
 roupas de forma integrada e escalável.
 ##  Acesso
-- API Base: [API](https://desafiobackendejectdeploy.pythonanywhere.com/)
-- (⚠️OBRIGATÓRIO⚠️)Documentação Interativa (Swagger): http://127.0.0.1:8000/api/docs/
+- Produção API: [NewStyle](https://desafiobackendejectdeploy.pythonanywhere.com/)
+- Documentação Interativa (Swagger): http://127.0.0.1:8000/api/docs/
 ##  Modelo Conceitual de Dados 
 <img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d97c45b2-2f3e-4d6f-9e83-011da6238d6a" />
 
@@ -14,7 +14,11 @@ A NewStyle é um projeto de desenvolvimento de uma API RESTful para um sistema d
 - Gerenciamento de usuários
   - Cadastro e autenticação de usuários, sendo diferenciados por papéis: lojistas e clientes. O sistema agrupa os papéis em grupos, com suas respectivas permissões para controlar as operações disponíveis dentro da API.
 - Gerenciamento de produtos
-  - Operações CRUD de produtos, categoria e variações, incluindo informações como: nome, preço, tamanho, cor, estoque e status do produto. 
+  - Operações CRUD de produtos, categoria e variações, incluindo informações como: nome, preço, tamanho, cor, estoque e status do produto.
+- Realização de pedido de produtos
+  - Finalização do carrinho do cliente para a criação do pedido, contendo endereço e método de pagamento escolhidas pelo cliente
+- Documentação da API
+  - Documentação gerada pelo `drf_spectacular`
 - Publicação na internet
   - API publicada no PythonAnywhere, apresentando interface navegável do DRF.
 
@@ -25,14 +29,15 @@ A NewStyle é um projeto de desenvolvimento de uma API RESTful para um sistema d
 | **Django 6.1.2** | Framework Backend |
 | **Django REST Framework 3.18.3** | Criação e gerenciamento de APIs RESTful |
 | **SQLite** | Sistema Gerenciador de Banco de dados relacional  
-## (⚠️OBRIGATÓRIO⚠️)Principais Dependências Utilizadas 
+## Principais Dependências Utilizadas 
 | Dependência | Descrição |
 |---|---|
 |`djangorestframework-simplejwt` -> Versão 5.5.1 | Autenticação via JWT (token)|
 |`PyJWT` -> Versão: 2.15.1 | Codifica e valida tokens JWT |
-|`drf_yasg` -> Versão 1.21.18 | Geração de documentação interativa Swagger |
+|`drf_spectacular` -> Versão 0.30.0 | Geração de documentação interativa Swagger |
+|`django-filter` -> Versão 26.2 | Filtragem de dados nos endpoints |
 
-## (⚠️OBRIGATÓRIO⚠️) ⚙️ Configuração e Instalação
+## Configuração e Instalação
 
 ### Pré-requisitos
 
@@ -102,15 +107,20 @@ O servidor estará disponível em `http://localhost:8000`.
 | `/admin/`   | Painel administrativo do Django       |
 | `/auth/login/`| Login da API navegável         |
 
-### Passo a passo para configurar a instalação:
-🚨NAO ESQUECER AS SEEDS🚨
+### Passo a passo para configurar a instalação (você só pode executar esse passo após a etapa de migrações feitas na parte 5 de "Configuração e instalação"):
+#### 1- Seed do lojista inicial:, você deve executar o comando `python manage.py seed_lojista_inicial`
+#### 2- Seed das categorias disponíveis da NewStyle: você deve executar o comando `python manage.py loaddata categorias.json`
+
+
 
 ### Variáveis de Ambiente para Produção
 
 ```bash
 DEBUG=False
-ALLOWED_HOSTS=['desafiobackendejectdeploy.pythonanywhere.com']
+ALLOWED_HOSTS=desafiobackendejectdeploy.pythonanywhere.com
 SECRET_KEY=chave-super-secreta-para-producao
+LOJISTA_EMAIL=email_lojista@gmail.com
+LOJISTA_SENHA=senha_segura_lojista
 ```
 
 Para gerar uma `SECRET_KEY` nova:
@@ -139,7 +149,7 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 ### Tabela de Referência - Gerenciamento de produtos 
 |Ação| Descrição | Endpoint da API | Método HTTP |
 |---|---|---|---|
-  | **Criar produtos** | Cria produtos dentro da loja (apenas lojistas podem criar produtos). | `/produtos` | POST |
+| **Criar produtos** | Cria produtos dentro da loja (apenas lojistas podem criar produtos). | `/produtos` | POST |
 | **Acessar produtos** | Visualiza os produtos dentro da loja (clientes visualizam apenas produtos ativos ; lojistas visualizam produtos ativos e inativos). | `/produtos` | GET |
 |**L**| R. | `/produtos` | GET |
 | **1**| E. | `/produtos/:id` | GET |

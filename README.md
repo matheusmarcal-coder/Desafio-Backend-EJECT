@@ -4,7 +4,7 @@
 roupas de forma integrada e escalável.
 ##  Acesso
 - Produção API: [NewStyle](https://desafiobackendejectdeploy.pythonanywhere.com/)
-- Documentação Interativa (Swagger): http://127.0.0.1:8000/api/docs/
+- Documentação Interativa (Swagger): [http://127.0.0.1:8000/api/docs/](https://desafiobackendejectdeploy.pythonanywhere.com/api/docs/?utm_source=chatgpt.com)
 ##  Modelo Conceitual de Dados 
 <img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d97c45b2-2f3e-4d6f-9e83-011da6238d6a" />
 

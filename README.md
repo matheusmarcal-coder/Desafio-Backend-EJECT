@@ -140,10 +140,10 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 ### Autenticação, registro e redefinição de senha
 |Método HTTP | Endpoint da API | Descrição |
 |---|---|---|
-|POST | `/auth/register/` | Cria um novo usuário por meio do registro de seus dados no sistema. |
+|POST | `/auth/registro/` | Cria um novo usuário por meio do registro de seus dados no sistema. |
 |POST | `/auth/login/` | Realiza o login do usuário e retorna o token de acesso (JWT). |
-| POST | 🚨`/auth/forgot-password/` | Envia o e-mail de redefinição de senha para o usuário que esqueceu a senha. | 
-| POST | 🚨`/auth/reset-password/` | Confirma a redefinição da senha usando o token enviado por e-mail e define a nova senha. |
+| POST | `/auth/esqueci_senha/` | Envia o e-mail de redefinição de senha para o usuário que esqueceu a senha. | 
+| POST | `/auth/redefinir_senha/` | Confirma a redefinição da senha usando o token enviado por e-mail e define a nova senha. |
 
 ### Gerenciamento de categorias 
 |Método HTTP | Endpoint da API | Descrição |
@@ -198,6 +198,21 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 | GET | `/pedidos/{id}/` |  Permite consultar um pedido específico com seus dados. |
 | PATCH | `/pedidos/{id}/` |  Permite atualizar paricalmente os dados de um pedido, assim como o seu status de entrega.| 
 
+### Gerenciamento de métodos de pagamento 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| GET | `/metodos_pagamento/` |  Permite vizualiar os metodos de pagamento cadastrados |
+| POST | `/metodos_pagamento/` |  Permite criar um método de pagamento (PIX, cartão e apelido opicional)
+| GET | `/metodos_pagamento/{id}/` |  Mostra os detalhes de um método de pagamento específico (desde que o método pertença a este usuário). |
+| DELETE | `/metodos_pagamento/{id}/` |  Permite remover um método de pagamento cadastrado anteriormente pelo usuário.| 
+
+### Gerenciamento de recuperação de senha 
+|Método HTTP | Endpoint da API | Descrição |
+|---|---|---|
+| POST | `/auth/esqueci_senha/` |  O usuário que esqueceu a senha recebe um e-mail com o link de recuperação contendo um identificador e token para a recuperação de senha.
+| POST | `/auth/redefinir_senha/` |  O usuário que recebeu o identificador e o token, tem a possibilidade de criar sua nova senha, com requisitos de validação de força mínima de senha.
+
+
 
 
 
@@ -219,7 +234,7 @@ A API NewStyle oferece diversos filtros para facilitar a busca e organização d
 | `page` | Número da página | `?page=2` | 
 
 ##  Autenticação e Permissões
-- **Endpoints de autenticação (`/auth/`)** — responsáveis por login, 🚨 recuperação🚨  e atualização de tokens JWT.  
+- **Endpoints de autenticação (`/auth/`)** — responsáveis por login, recuperação e atualização de tokens JWT.  
 - **Endpoints de usuários (`/clientes/`)** — permitem gerenciar contas e definir permissões específicas para cada usuário.
 ##  Estrutura do Projeto
 ```

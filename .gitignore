@@ -1,6 +1,7 @@
 # Credenciais e variaveis de ambiente
 .env
 .env.*
+!.env.exemple
 # Ambiente virtual
 venv/
 .venv/

@@ -84,6 +84,8 @@ class Carrinho(models.Model):
     # Estabelece a relação cardinal de 1:1 com cliente e carrinho 
     usuario = models.OneToOneField(Usuario, on_delete = models.CASCADE)
 
+    finalizado= models.BooleanField(default = False)
+
 
 class ItemCarrinho(models.Model):
     # Estabelecendo a relação de 1 carrinho : N itens carrinho apartir do uso da ForeignKey (cardinalidade 1:N)
@@ -103,4 +105,39 @@ class ItemCarrinho(models.Model):
                 name= 'item_unico_por_carrinho'
             )
         ]
-    
+
+
+class Pedido (models.Model):
+    # Status rascunho para quando o cliente finaliza o carrinho mas ainda não realizou o pedido (o carrinho é esvaziado, mas o pedido é guardado no rascunho)
+    STATUS_CHOICES = [
+        ('rascunho', 'Rascunho'),
+        ('pendente', 'PENDENTE'),
+        ('confirmado','CONFIRMADO'),
+        ('enviado','ENVIADO'),
+        ('entregue','ENTREGUE'),
+        ('cancelado','CANCELADO')
+    ]
+    usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT)
+    status = models.CharField(max_length=20, choices = STATUS_CHOICES, default = 'rascunho')
+
+    cep_entrega = models.CharField(max_length=8, blank = True)
+    rua_entrega = models.CharField(max_length=255, blank = True)
+    numero_entrega = models.CharField(max_length=10,blank = True)
+    bairro_entrega =models.CharField(max_length=255, blank = True)
+    cidade_entrega = models.CharField(max_length=255, blank = True)
+    uf_entrega = models.CharField(max_length=2, blank = True)
+
+    metodo_pagamento = models.CharField(max_length=10, blank = True)
+    pedido_criado = models.DateTimeField(auto_now_add=True)
+
+
+class ItemPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name= 'itens_pedido')
+    variacao_pedido = models.ForeignKey(Variacao, on_delete=models.PROTECT)
+    #Quantidade de itens da variação por carrinho finalizado
+    quantidade = models.PositiveIntegerField()
+    #Preço unitário de um único item da variação 
+    preco_unitario = models.DecimalField(max_digits= 10, decimal_places=2)
+
+    def __str__(self):
+        return f"Item{self.id} - Pedido{self.pedido.id}"

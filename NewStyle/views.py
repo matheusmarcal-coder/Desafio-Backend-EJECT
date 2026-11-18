@@ -1,5 +1,5 @@
-from NewStyle.models import Cliente, Produto, Categoria, Usuario, Variacao, ItemCarrinho, Carrinho 
-from NewStyle.serializers import ClienteSerializer, ProdutoSerializer, CategoriaSerializer, VariacaoSerializer, RegistroSerializer, ItemCarrinhoSerializer, LoginSerializer
+from NewStyle.models import Cliente, Produto, Categoria, Usuario, Variacao, ItemCarrinho, Carrinho, Pedido, ItemPedido
+from NewStyle.serializers import ClienteSerializer, ProdutoSerializer, CategoriaSerializer, VariacaoSerializer, RegistroSerializer, ItemCarrinhoSerializer, LoginSerializer, PedidoSerializer, ConfirmarPedidoSerializer, AtualizarStatusPedidoSerializer
 from rest_framework import viewsets, status 
 from rest_framework.views import APIView 
 from rest_framework.response import Response 
@@ -10,7 +10,10 @@ from decimal import Decimal, InvalidOperation
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django_filters.rest_framework import DjangoFilterBackend
 from NewStyle.filters import ProdutoFilter
-
+from drf_spectacular.utils import extend_schema
+from django.db import transaction
+from rest_framework.decorators import action
+from django.db.models import F
 
 # Validação dos dados do login via token (JWT)
 class LoginView(TokenObtainPairView):
@@ -91,6 +94,9 @@ class RegistroView(APIView):
 
     # Define que usuários sem autenticação possam criar uma conta ("AllowAny")
     permission_classes = [AllowAny]
+
+    @extend_schema(request = RegistroSerializer, responses = {201: RegistroSerializer}, description = "Registro de um novo usuário na plataforma")
+
     def post(self, request):
         serializer = RegistroSerializer(data = request.data)
         if serializer.is_valid():
@@ -116,7 +122,7 @@ class CarrinhoViewSet(viewsets.ModelViewSet):
     serializer_class = ItemCarrinhoSerializer
 
     # Métodos de requisição permitidos para o carrinho
-    http_method_names = ['get', 'post', 'put', 'delete', 'head', 'options']
+    http_method_names = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch']
 
     # Organizamos a relação de que, cada cliente acessa apenas o seu próprio carrinho 
     def get_queryset(self):
@@ -149,3 +155,183 @@ class CarrinhoViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return super().update(request, *args, **kwargs)
+    @extend_schema(
+            request = None, 
+            responses={ 200: {
+                   'type': 'objects',
+                   'properties' : {
+                        'mensagem' : {'type' : 'string'},
+                        'pedido_id' : {'type' : 'integer'},
+                        'status' : {'type' : 'string'}
+                    } 
+                }
+            },
+    description = 'Finaliza o carrinho e cria um rascunho do pedido.'
+    )
+
+    @action(detail = False, methods= ['patch'], url_path = 'finalizar')
+    def finalizar(self, request):
+
+        with transaction.atomic():
+            carrinho = Carrinho.objects.filter(usuario=request.user).first()
+            if carrinho is None:
+                return Response({'erro' : 'Carrinho não encontrado.'}, status = status.HTTP_404_NOT_FOUND)
+            itens = ItemCarrinho.objects.filter(carrinho=carrinho)
+
+            if not itens.exists():
+                return Response({'erro' : 'O carrinho está vazio.'}, status = status.HTTP_400_BAD_REQUEST)
+            
+            if Pedido.objects.filter(usuario=request.user, status = 'rascunho').exists():
+                return Response({'erro' : 'Você já tem um pedido em rascunho.'}, status = status.HTTP_409_CONFLICT)
+            
+            # Criamos o rascunho do possível pedido
+            pedido = Pedido.objects.create( usuario = request.user, status = 'rascunho')
+
+            # Criamos uma cópia do que está dentro do carrinho para o pedido 
+            for item in itens:
+                 ItemPedido.objects.create( pedido=pedido, variacao_pedido = item.variacao, quantidade = item.quantidade_itens, preco_unitario = item.variacao.Produto.preco)
+
+            itens.delete()
+            return Response(
+                 {
+                 'mensagem' : 'Carrinho finalizado com sucesso!',
+                 'pedido_id' : pedido.id,
+                 'status' : pedido.status
+                },
+            status = status.HTTP_200_OK
+            )
+
+
+class PedidoViewSet(viewsets.ModelViewSet):
+    serializer_class = PedidoSerializer
+    permission_classes = [IsAuthenticated]
+
+    http_method_names = ['get', 'post', 'head', 'options', 'patch']
+
+    def get_queryset(self):
+        # Se o usuário for um lojista, ele verá todos os pedidos feitos 
+         if self.request.user.groups.filter(name = 'lojistas').exists():
+             pedidos = Pedido.objects.all()
+
+             if self.aciton == 'list':
+                # O tipo de filtragem de status do pedido será identificada pelo lojista por meio da URL (exemplo: GET /pedidos/?status= entregue -> só filtra os pedidos com status ENTREGUE)
+                filtra_status = self.request.query_params.get('status')
+                if filtra_status:
+                      pedidos = pedidos.filter(status = filtra_status)
+
+                # Se o status não foi informado pelo lojista na URL: Retorna os pedidos ativos(pendente, confirmado e enviado), dos mais antigos até os mais novos
+                else:
+                    pedidos= pedidos.filter(status__in = ['pendente', 'confirmado', 'enviado'])
+             return pedidos.order_by('pedido_criado')
+
+
+         else:
+            # Se não for um lojista (logo, é um cliente), ele verá apenas o próprio pedido
+            return Pedido.objects.filter(usuario = self.request.user).order_by('-pedido_criado')
+
+    @extend_schema(
+            request = ConfirmarPedidoSerializer,
+            responses = {201: PedidoSerializer},
+            description = 'Confirma um pedido em rascunho, tornando-o com status PENDENTE, validando e abaixando o estoque.'
+    )
+
+    def create(self, request, *args, **kwargs):
+        # Valida os dados enviados no pedido 
+        serializer = ConfirmarPedidoSerializer(data = request.data)
+        serializer.is_valid(raise_exception = True)
+
+        with transaction.atomic():
+
+            pedido = Pedido.objects.filter(usuario = request.user, status = 'rascunho').first()
+
+            if pedido is None:
+                 return Response ({'erro' : 'Você não possui um pedido em rascunho'}, status = status.HTTP_404_NOT_FOUND)
+            itens = list(pedido.itens_pedido.all())
+
+            if not itens:
+                 return Response ({'erro': 'O seu pedido não possui itens!'}, status = status.HTTP_400_BAD_REQUEST)
+            for item in itens:
+                 atualizado = Variacao.objects.filter(
+                    pk = item.variacao_pedido_id,
+                    estoque__gte=item.quantidade,
+                    Produto__ativo=True
+                 ).update( estoque=F('estoque') - item.quantidade)
+
+            if atualizado == 0:
+                 transaction.set_rollback(True)
+
+                 return Response ({
+                    'erro': 'Produto inativo ou estoque insuficiente',
+                    'item_id': item.id
+                 },
+                    status = status.HTTP_400_BAD_REQUEST
+                 )
+
+            pedido.cep_entrega = serializer.validated_data['cep_entrega']
+            pedido.rua_entrega = serializer.validated_data['rua_entrega']
+            pedido.numero_entrega = serializer.validated_data['numero_entrega']
+            pedido.bairro_entrega =serializer.validated_data['bairro_entrega']
+            pedido.cidade_entrega =serializer.validated_data['cidade_entrega']
+            pedido.uf_entrega =serializer.validated_data['uf_entrega']
+
+            pedido.metodo_pagamento = serializer.validated_data['metodo_pagamento']
+
+            pedido.status = 'pendente'
+
+            pedido.save(update_fields= [
+                'cep_entrega',
+                'rua_entrega',
+                'numero_entrega',
+                'bairro_entrega',
+                'cidade_entrega',
+                'uf_entrega',
+                'metodo_pagamento',
+                'status'
+            ] )
+
+        return Response({
+            'mensagem' : 'Pedido confirmado com sucesso!',
+            'pedido_id' : pedido.id,
+            'status' : pedido.status
+        },
+            status = status.HTTP_201_CREATED
+        )
+
+    def partial_update(self, request, *args, **kwargs):
+        # Permite que apenas usuários que pertencem ao grupo Lojistas podem ataualizar o status do pedido. 
+        if not request.user.groups.filter(name = 'lojistas').exists():
+             return Response ({'erro' : 'Apenas lojistas podem atualizar pedidos.'}, status = status.HTTP_403_FORBIDDEN)
+        pedido = self.get_objects()
+
+        serializer = AtualizarStatusPedidoSerializer(data = request.data)
+        serializer.is_valid(raise_exceptions = True)
+
+        novo_status = serializer.validated_data['status']
+        transicoes_status = {
+             'rascunho' : [],
+             'pendente' : ['confirmado', 'cancelado'],
+             'confirmado' : ['cancelado', 'enviado'],
+             'enviado' : ['entregue'],
+             'entregue' : [],
+             'cancelado' : []
+        }
+        if novo_status not in transicoes_status.get(pedido.status, []):
+             return Response({ 'erro' : 'Esse tipo de transição de status não é permitido.'},
+                             status = status.HTTP_400_BAD_REQUEST
+                             )
+
+        with transaction.atomic ():
+            if novo_status == 'cancelado':
+                for item in pedido.itens_pedido.all():
+                    Variacao.objects.filter( pk = item.variacao_pedido_id).update(estoque = F('estoque') + item.quantidade)
+
+            pedido.status = novo_status
+            pedido.save(update_fields = ['status'])
+
+        return Response ({
+             'mensagem' : 'Stauts do pedido atualizado com sucesso.',
+             'pedido_id' : pedido.id,
+             'status' : pedido.status
+        },
+            status = status.HTTP_200_OK
+        )

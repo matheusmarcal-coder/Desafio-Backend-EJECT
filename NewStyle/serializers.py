@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from NewStyle.models import Cliente, Produto, Categoria, Variacao, Usuario, ItemCarrinho
+from NewStyle.models import Cliente, Produto, Categoria, Variacao, Usuario, ItemCarrinho, ItemPedido, Pedido
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer 
+
 
 
 # Serializer para o modelo Usuario, incluindo o campo de senha.
@@ -123,3 +124,42 @@ class ItemCarrinhoSerializer(serializers.ModelSerializer):
         if quantidade_itens is not None and quantidade_itens > variacao.estoque: 
             raise serializers.ValidationError("A quantidade de itens adcionada não pode exceder a variação de estoque da loja")
         return attrs
+
+
+class ItemPedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =  ItemPedido
+        fields = ['id', 'variacao_pedido', 'quantidade', 'preco_unitario']
+        read_only_fields = fields 
+
+
+class PedidoSerializer(serializers.ModelSerializer):
+    itens_pedido = ItemPedidoSerializer(many = True, read_only = True)
+    class Meta:
+        model = Pedido
+        fields = ['id', 'status', 'uf_entrega', 'cep_entrega' , 'rua_entrega', 'numero_entrega', 'bairro_entrega', 'cidade_entrega','metodo_pagamento', 'pedido_criado', 'itens_pedido']
+        read_only_fields = fields
+
+
+class ConfirmarPedidoSerializer(serializers.Serializer):
+
+    cep_entrega = serializers.CharField(max_length=8, min_length = 8)
+    rua_entrega = serializers.CharField(max_length=255)
+    numero_entrega = serializers.CharField(max_length=10)
+    bairro_entrega =serializers.CharField(max_length=255)
+    cidade_entrega = serializers.CharField(max_length=255)
+    uf_entrega = serializers.CharField(max_length=2, min_length = 2)
+
+    
+    metodo_pagamento = serializers.CharField(max_length = 10)
+
+    def valitade_cep_entrega(self,value):
+        if not value.isdigit():
+            raise serializers.ValidationError('O campo CEP precisa apenas conter números.')
+        else:
+            return value
+
+class AtualizarStatusPedidoSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(  
+        choices = ['confirmado', 'enviado','entregue','cancelado']
+    )

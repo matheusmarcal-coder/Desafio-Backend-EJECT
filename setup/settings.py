@@ -40,17 +40,25 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'NewStyle', 
     'rest_framework',
-    'drf_yasg',
-    'django_filters'
+    'drf_spectacular',
+    'django_filters',
+
 ]
 
+SPECTACULAR_SETTINGS = {
+    'TITLE' : 'NewStyle',
+    'DESCRIPTION' : 'A NewStyle é um projeto de desenvolvimento de uma API RESTful para um sistema de e-commerce, contendo clientes, lojistas, produtos, categorias de produto, variações de produtos e carrinho de compras.',
+    'VERSION' : '1.0.0',
+    'SERVE_INCLUDE_SCHEMA' : False,
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination', 'PAGE_SIZE': 12
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination', 'PAGE_SIZE': 12,
+    'DEFAULT_SCHEMA_CLASS' : 'drf_spectacular.openapi.AutoSchema',
 }
 
 #Define a criação de tokens e o tempo de vida deles 

@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include 
-from NewStyle.views import ClienteViewSet, ProdutoViewSet, CategoriaViewSet, VariacaoViewSet, RegistroView, LoginView, CarrinhoViewSet
-from rest_framework import routers 
+from NewStyle.views import ClienteViewSet, ProdutoViewSet, CategoriaViewSet, VariacaoViewSet, RegistroView, LoginView, CarrinhoViewSet, PedidoViewSet
+from rest_framework import routers
+from drf_spectacular.views import ( SpectacularAPIView, SpectacularSwaggerView) 
 
 
 router = routers.DefaultRouter()
@@ -10,6 +11,7 @@ router.register('produtos', ProdutoViewSet, basename = 'produtos')
 router.register('categorias', CategoriaViewSet, basename = 'categorias')
 router.register('variacoes', VariacaoViewSet, basename = 'variacoes')
 router.register('carrinho/itens', CarrinhoViewSet, basename = 'carrinho-itens')
+router.register('pedidos', PedidoViewSet, basename = 'pedidos')
 
 
 urlpatterns = [
@@ -23,5 +25,8 @@ urlpatterns = [
     path('auth/login/', LoginView.as_view()),
 
 # Define a URL pattern para registro do usuário, mapeando em 'auth/register/' 
-    path('auth/registro/', RegistroView.as_view())
+    path('auth/registro/', RegistroView.as_view()),
+
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name = 'swagger-ui')
 ]

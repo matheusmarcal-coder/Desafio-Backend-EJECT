@@ -220,11 +220,11 @@ A API NewStyle oferece diversos filtros para facilitar a busca e organização d
 
 ##  Autenticação e Permissões
 - **Endpoints de autenticação (`/auth/`)** — responsáveis por login, 🚨 recuperação🚨  e atualização de tokens JWT.  
-- **Endpoints de usuários (`/users/`)** — permitem gerenciar contas e definir permissões específicas para cada usuário.
+- **Endpoints de usuários (`/clientes/`)** — permitem gerenciar contas e definir permissões específicas para cada usuário.
 ##  Estrutura do Projeto
 ```
-Nome do Projeto/
-├── api/                       # App da API: models, serializers, views e rotas
+Desafio-Backend-EJECT/
+├── NewStyle/                       # App da API: models, serializers, views e rotas
 │   ├── migrations/
 │   ├── admin.py
 │   ├── models.py

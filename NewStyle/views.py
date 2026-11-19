@@ -220,7 +220,7 @@ class PedidoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # Se o usuário for um lojista, ele verá todos os pedidos feitos 
-         if self.request.user.groups.filter(name = 'lojistas').exists():
+         if self.request.user.groups.filter(name__iexact='lojistas').exists():
              pedidos = Pedido.objects.all()
 
              if self.action == 'list':
@@ -313,7 +313,7 @@ class PedidoViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         # Permite que apenas usuários que pertencem ao grupo Lojistas podem ataualizar o status do pedido. 
-        if not request.user.groups.filter(name = 'lojistas').exists():
+        if not request.user.groups.filter(name__iexact='lojistas').exists():
              return Response ({'erro' : 'Apenas lojistas podem atualizar pedidos.'}, status = status.HTTP_403_FORBIDDEN)
         pedido = self.get_object()
 

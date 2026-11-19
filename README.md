@@ -166,6 +166,10 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 |**GET** | `/produtos/{id}/` | Vizualiza um produto específico. |
 | **PUT** | `/produtos/{id}/` | Permite atualizar os dados dentro do produto (apenas lojistas).|
 | **PATCH** | `/produtos/{id}/` | Permite atualizar parcialmente os dados do produto, assim como o status do produto (ativo/inativo ; apenas lojistas).|
+- Exemplo de banco de dados:
+<img width="1402" height="479" alt="image" src="https://github.com/user-attachments/assets/c2d8f82e-2c1d-400b-917a-78dbe567b7c4" />
+
+
 
 ### Gerenciamento de variações 
 |Método HTTP | Endpoint da API | Descrição |
@@ -175,6 +179,10 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 | GET | `/variacoes/{id}/` |  Mostra uma variação específica dentro da loja. (Lojistas e clientes vizualizam). |
 | PUT | `/variacoes/{id}/` | Atualiza os dados de uma variação específica. (apenas lojistas podem atualizar variações).| 
 | PATCH | `/variacoes/{id}/` |  Permite atualizar paricalmente os dados de uma variação específica, assim como o estoque de uma variação específica. (apenas lojistas podem atualizar variações).| 
+- Exemplo de banco de dados:
+<img width="1391" height="480" alt="image" src="https://github.com/user-attachments/assets/a51c7a89-42dc-46d3-a610-e3b1a311bf47" />
+
+
 
 ### Gerenciamento de carrinho 
 |Método HTTP | Endpoint da API | Descrição |

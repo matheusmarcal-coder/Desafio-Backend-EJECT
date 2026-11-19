@@ -157,6 +157,7 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 | GET | `/categorias/{id}/` |  Mostra uma categoria específica dentro da loja. (Lojistas e clientes vizualizam). |
 | PUT | `/categorias/{id}/` | Atualiza os dados de uma categoria específica. (apenas lojistas podem atualizar categorias).| 
 | PATCH | `/categorias/{id}/` |  Permite atualizar paricalmente os dados de uma categoria específica. (apenas lojistas podem atualizar categorias).| 
+<img width="1393" height="581" alt="image" src="https://github.com/user-attachments/assets/fa2243d0-e7d6-4d5e-ac58-ba677e5fbb40" />
 
 ### Gerenciamento de produtos 
 |Método HTTP | Endpoint da API | Descrição |

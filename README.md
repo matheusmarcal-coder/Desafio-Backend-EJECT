@@ -4,7 +4,11 @@
 roupas de forma integrada e escalável.
 ##  Acesso
 - Produção API: [NewStyle](https://desafiobackendejectdeploy.pythonanywhere.com/)
-- Documentação Interativa (Swagger): [http://127.0.0.1:8000/api/docs/](https://desafiobackendejectdeploy.pythonanywhere.com/api/docs/?utm_source=chatgpt.com)
+- Documentação Interativa (Swagger): [Swagger NewStyle](https://desafiobackendejectdeploy.pythonanywhere.com/api/docs/?utm_source=chatgpt.com)
+  - Para acessar os endpoints que requisitam token para acesso: 
+    - 1- Faça login na plataforma.
+    - 2- Adcione o token ao botão Authorize do Swagger, no formato "Bearer <token>" indicado.
+    - 3- Você logará com a conta específica adquirindo os acessos para os endpoints específicos.
 ##  Modelo Conceitual de Dados 
 <img width="2107" height="1204" alt="Desafio Backend EJECT - Modelo Conceitual de Dados_ New Style" src="https://github.com/user-attachments/assets/d97c45b2-2f3e-4d6f-9e83-011da6238d6a" />
 

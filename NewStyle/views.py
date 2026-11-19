@@ -39,8 +39,10 @@ class ClienteViewSet(viewsets.ModelViewSet):
 
     # Define o conjunto de consultas (queryset) para o ViewSet de Cliente, filtrando os clientes associados ao usuário autenticado e ordenando-os pelo campo 'id'.
     def get_queryset(self):
-         return Cliente.objects.filter( usuario=self.request.user ).order_by('id')
-
+        if self.request.user.groups.filter(name__iexact='lojistas').exists():
+            return Cliente.objects.all().order_by('id')
+        else:
+            return Cliente.objects.filter(usuario=self.request.user).order_by('id')
 
 # Mostra todos os produtos cadastrados no banco, ordenados por ID, e permite operações de leitura e escrita para usuários autenticados com permissões(lojista), enquanto usuários anônimos e clientes podem apenas ler os dados.
 class ProdutoViewSet(viewsets.ModelViewSet):

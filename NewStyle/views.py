@@ -223,7 +223,7 @@ class PedidoViewSet(viewsets.ModelViewSet):
          if self.request.user.groups.filter(name = 'lojistas').exists():
              pedidos = Pedido.objects.all()
 
-             if self.aciton == 'list':
+             if self.action == 'list':
                 # O tipo de filtragem de status do pedido será identificada pelo lojista por meio da URL (exemplo: GET /pedidos/?status= entregue -> só filtra os pedidos com status ENTREGUE)
                 filtra_status = self.request.query_params.get('status')
                 if filtra_status:
@@ -265,16 +265,16 @@ class PedidoViewSet(viewsets.ModelViewSet):
             if not itens:
                  return Response ({'erro': 'O seu pedido não possui itens!'}, status = status.HTTP_400_BAD_REQUEST)
             for item in itens:
-                 atualizado = Variacao.objects.filter(
+                atualizado = Variacao.objects.filter(
                     pk = item.variacao_pedido_id,
                     estoque__gte=item.quantidade,
                     Produto__ativo=True
                  ).update( estoque=F('estoque') - item.quantidade)
 
-            if atualizado == 0:
-                 transaction.set_rollback(True)
+                if atualizado == 0:
+                     transaction.set_rollback(True)
 
-                 return Response ({
+                     return Response ({
                     'erro': 'Produto inativo ou estoque insuficiente',
                     'item_id': item.id
                  },
@@ -315,10 +315,10 @@ class PedidoViewSet(viewsets.ModelViewSet):
         # Permite que apenas usuários que pertencem ao grupo Lojistas podem ataualizar o status do pedido. 
         if not request.user.groups.filter(name = 'lojistas').exists():
              return Response ({'erro' : 'Apenas lojistas podem atualizar pedidos.'}, status = status.HTTP_403_FORBIDDEN)
-        pedido = self.get_objects()
+        pedido = self.get_object()
 
         serializer = AtualizarStatusPedidoSerializer(data = request.data)
-        serializer.is_valid(raise_exceptions = True)
+        serializer.is_valid(raise_exception=True)
 
         novo_status = serializer.validated_data['status']
         transicoes_status = {
